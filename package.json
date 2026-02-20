@@ -1,0 +1,28 @@
+{
+  "name": "devhacks2026",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/travisfriesen/devhacks2026#readme",
+  "bugs": {
+    "url": "https://github.com/travisfriesen/devhacks2026/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/travisfriesen/devhacks2026.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "electron": "^40.6.0"
+  },
+  "dependencies": {
+    "katex": "^0.16.28",
+    "sqlite3": "^5.1.7",
+    "yaml": "^2.8.2"
+  }
+}
