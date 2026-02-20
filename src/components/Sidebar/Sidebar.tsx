@@ -42,7 +42,7 @@ const Sidebar = () => {
     if (!sidebarVisible) return null;
 
     return (
-        <aside className="w-52 h-full fixed shrink-0 bg-primary border-r border-secondary/30 overflow-y-auto flex flex-col">
+        <aside className="w-52 h-full shrink-0 bg-primary border-r border-secondary/30 overflow-y-auto flex flex-col">
             <div className="px-4 py-3 border-b border-secondary/20">
                 <span className="font-ui text-xs uppercase tracking-widest text-paper/30">
                     Decks

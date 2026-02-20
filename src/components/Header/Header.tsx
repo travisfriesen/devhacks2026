@@ -1,7 +1,6 @@
 import { useAppStore } from "@/store/useAppStore";
 import { PanelLeftClose, PanelLeft } from "lucide-react";
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { NAV_ITEMS } from "../../global/constants";
 
 const Header = () => {
@@ -11,7 +10,7 @@ const Header = () => {
     const activeView = activeTabId ? null : navView; // if a tab is active, consider the view to be "tab" for header purposes, eh whatever I'm tried
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-2 border-b border-secondary/40 bg-primary">
+        <header className="z-40 flex items-center justify-between px-4 py-2 border-b border-secondary/40 bg-primary">
             <div className="flex items-center gap-3">
                 <button
                     onClick={toggleSidebar}

@@ -2,6 +2,7 @@ import React from "react";
 
 import TabBar from "@/components/TabBar/TabBar";
 import Sidebar from "@/components/Sidebar/Sidebar";
+
 import Header from "@/components/Header/Header";
 import Dashboard from "@/pages/Dashboard";
 import Deck from "@/pages/Deck";
@@ -31,12 +32,10 @@ const App = () => {
     return (
         <div className="w-screen h-screen overflow-hidden flex flex-col bg-background">
             <Header />
-            <Sidebar />
-            <div
-                className="flex flex-col flex-1 overflow-hidden"
-                style={{ paddingTop: "44px" }}>
-                <TabBar />
-                <div className="flex flex-1 overflow-hidden">
+            <div className="flex flex-1 overflow-hidden">
+                <Sidebar />
+                <div className="flex flex-col flex-1 overflow-hidden">
+                    <TabBar />
                     <main className="flex-1 overflow-y-auto">
                         {renderMain()}
                     </main>
