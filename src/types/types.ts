@@ -1,4 +1,4 @@
-export interface deck {
+export interface IDeck {
     deckId: string;
     deckName: string;
     filepath: string;
@@ -8,7 +8,7 @@ export interface deck {
     streak: number;
 }
 
-export interface card {
+export interface ICard {
     deckId: string;
     cardId: [string, string];
     question: string;

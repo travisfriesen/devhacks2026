@@ -1,46 +1,48 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { IDeckCardProps } from "src/components/DeckCard";
+import { DeckCard, IDeckCardProps } from "@/components/DeckCard";
 
 const Dashboard = () => {
     const navigate = useNavigate();
     const decks: IDeckCardProps[] = [
         {
-            deckId: 1,
-            title: "Deck 1",
-            description: "Description for Deck 1",
-            flashcardCount: 10,
-            onClick: () => navigate("/deck/1"),
+            deckId: "1",
+            deckName: "Spanish Vocabulary",
+            filepath: "/decks/spanish-vocab.json",
+            lastUpdated: new Date(),
+            created: new Date(),
+            uses: 10,
+            streak: 5,
+            onClick: (deckId: number) => navigate(`/decks/${deckId}`),
         },
         {
-            deckId: 2,
-            title: "Deck 2",
-            description: "Description for Deck 2",
-            flashcardCount: 20,
-            onClick: () => navigate("/deck/2"),
+            deckId: "2",
+            deckName: "History Facts",
+            filepath: "/decks/history-facts.json",
+            lastUpdated: new Date(),
+            created: new Date(),
+            uses: 20,
+            streak: 10,
+            onClick: (deckId: number) => navigate(`/decks/${deckId}`),
         },
         {
-            deckId: 3,
-            title: "Deck 3",
-            description: "Description for Deck 3",
-            flashcardCount: 15,
-            onClick: () => navigate("/deck/3"),
+            deckId: "3",
+            deckName: "Science Concepts",
+            filepath: "/decks/science-concepts.json",
+            lastUpdated: new Date(),
+            created: new Date(),
+            uses: 15,
+            streak: 7,
+            onClick: (deckId: number) => navigate(`/decks/${deckId}`),
         },
     ];
+
     return (
         <div>
             <h1>Dashboard</h1>
             <ul>
                 {decks.map((deck) => (
-                    <li
-                        className="border rounded p-4 mb-4 cursor-pointer hover:bg-gray-100"
-                        role="button"
-                        key={deck.deckId}
-                        onClick={deck.onClick}>
-                        <h2>{deck.title}</h2>
-                        <p>{deck.description}</p>
-                        <p>Flashcards: {deck.flashcardCount}</p>
-                    </li>
+                    <DeckCard {...deck} />
                 ))}
             </ul>
         </div>

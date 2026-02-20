@@ -1,11 +1,11 @@
-import { card } from "../types/types";
+import { ICard } from "../types/types";
 
 /**
  * Gets a card from the database. Returns null if the card does not exist.
  * @param cardId
  * @param deckId
  */
-export function getCard(cardId: string, deckId: string): card {
+export function getCard(cardId: string, deckId: string): ICard {
     return null;
 }
 
@@ -13,7 +13,7 @@ export function getCard(cardId: string, deckId: string): card {
  * Gets all the cards from the database with the given deckId. Returns null if the deck does not exist.
  * @param deckId
  */
-export function getCards(deckId: string): card[] {
+export function getCards(deckId: string): ICard[] {
     return null;
 }
 
@@ -22,7 +22,7 @@ export function getCards(deckId: string): card[] {
  * @param card
  * @param deckId
  */
-export function setCard(card: card, deckId: string): boolean {
+export function setCard(card: ICard, deckId: string): boolean {
     return false;
 }
 
@@ -31,6 +31,6 @@ export function setCard(card: card, deckId: string): boolean {
  * @param cards
  * @param deckId
  */
-export function setCards(cards: card[], deckId: string): boolean {
+export function setCards(cards: ICard[], deckId: string): boolean {
     return false;
 }

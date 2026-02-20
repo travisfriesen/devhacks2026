@@ -13,6 +13,7 @@
     --color-background: #f5f0ff;
     --color-outline: #230903;
     --color-paper: #fffdf7;
+    --font-ui: "Plus Jakarta Sans", sans-serif;
 }
 
 :root {
