@@ -1,27 +1,38 @@
 {
   "name": "devhacks2026",
+  "productName": "DevHacks 2026",
   "version": "1.0.0",
-  "description": "",
-  "homepage": "https://github.com/travisfriesen/devhacks2026#readme",
-  "bugs": {
-    "url": "https://github.com/travisfriesen/devhacks2026/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/travisfriesen/devhacks2026.git"
-  },
-  "license": "ISC",
-  "author": "",
-  "type": "commonjs",
-  "main": "index.js",
+  "description": "My Electron application description",
+  "main": ".vite/build/main.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts,.tsx ."
   },
   "devDependencies": {
-    "electron": "^40.6.0"
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
+    "@electron-forge/plugin-fuses": "^7.11.1",
+    "@electron-forge/plugin-vite": "^7.11.1",
+    "@electron/fuses": "^1.8.0",
+    "@types/electron-squirrel-startup": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "electron": "40.6.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.32.0",
+    "typescript": "~4.5.4",
+    "vite": "^5.4.21"
   },
   "dependencies": {
-    "katex": "^0.16.28",
+    "electron-squirrel-startup": "^1.0.1",
     "sqlite3": "^5.1.7",
     "yaml": "^2.8.2"
   }
