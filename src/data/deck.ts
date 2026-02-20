@@ -36,7 +36,61 @@ export function deleteDeck(deckId: string): boolean {
     return false;
 }
 
-function updateDeckStreak(deck: deck) {
+/**
+ * Updates the deck's filepath in the database.
+ * Returns true if successful, false otherwise
+ * @param deckId
+ * @param filepath
+ */
+export function updateDeckFilepath(deckId: string, filepath: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's name in the database.
+ * Returns true if successful, false otherwise
+ * @param deckId
+ * @param name
+ */
+export function updateDeckName(deckId: string, name: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's last updated streak in the database.
+ * Returns true if successful, false otherwise
+ * @param deckId
+ * @param date
+ */
+export function updateDeckLastUpdated(deckId: string, date: Date): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's uses in the database.
+ * Returns true if successful, false otherwise
+ * @param deckId
+ * @param uses
+ */
+export function updateDeckUses(deckId: string, uses: number): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's streak in the database.
+ * Returns true if successful, false otherwise
+ * @param deckId
+ * @param streak
+ */
+export function updateDeckStreak(deckId: string, streak: number): boolean {
+    return false;
+}
+
+/**
+ * Increments the Deck Streak
+ * @param deck
+ */
+function incrementDeckStreak(deck: deck) {
     const today = new Date()
     // stupid yesterday function because Date.getDate(Date() -1) errors sometimes,
     // and doesn't necessarily handle the ends of the months.
