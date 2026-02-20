@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS cards (
     question TEXT NOT NULL,
     answer TEXT NOT NULL,
     laters INTEGER DEFAULT 0 NOT NULL,
+    dueDate TEXT NOT NULL DEFAULT CURRENT_DATE,
     
     PRIMARY KEY (cardId, deckId) 
 );
