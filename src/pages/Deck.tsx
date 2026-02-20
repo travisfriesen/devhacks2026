@@ -1,38 +1,49 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { Flashcard, IFlashcardProps } from "../components/Flashcard";
+import { useAppStore } from "@/store/useAppStore";
+import { Flashcard } from "@/components/Flashcard";
 
 const Deck = () => {
-    const { deckId } = useParams();
-    const [currentIndex, setCurrentIndex] = React.useState(0);
-    const [flipped, setFlipped] = React.useState(false);
+    const { tabs, activeTabId, nextCard, prevCard, flipCard } = useAppStore();
+    const tab = tabs.find((t) => t.tabId === activeTabId);
 
-    const cards: IFlashcardProps[] = [
-        {
-            deckId: deckId,
-            cardId: ["1", "1"],
-            question: "What is the capital of France?",
-            answer: "Paris",
-            laters: 0,
-            dueDate: new Date(),
-        },
-    ];
+    if (!tab) return null;
 
-    if (!cards || cards.length === 0) return <div>No cards in this deck</div>;
+    const cards = tab.deck.cards;
+
+    if (!cards || cards.length === 0) {
+        return (
+            <div className="flex items-center justify-center h-full font-ui text-sm text-primary/50">
+                No cards in this deck yet.
+            </div>
+        );
+    }
+
+    const current = cards[tab.currentIndex];
 
     return (
-        <div>
+        <div className="flex flex-col items-center justify-center h-full gap-6 p-8">
+            <p className="font-ui text-xs text-primary/40 uppercase tracking-widest">
+                {tab.currentIndex + 1} / {cards.length}
+            </p>
+
             <Flashcard
-                {...cards[currentIndex]}
-                flipped={flipped}
-                onClick={() => setFlipped(!flipped)}
+                {...current}
+                flipped={tab.flipped}
+                onClick={() => flipCard(tab.tabId)}
             />
-            <button
-                onClick={() =>
-                    setCurrentIndex((currentIndex + 1) % cards.length)
-                }>
-                Next
-            </button>
+
+            <div className="flex gap-3">
+                <button
+                    onClick={() => prevCard(tab.tabId)}
+                    className="font-ui text-sm px-5 py-2 border border-primary/20 rounded text-primary hover:bg-primary/5 transition-colors">
+                    ← Prev
+                </button>
+                <button
+                    onClick={() => nextCard(tab.tabId)}
+                    className="font-ui text-sm px-5 py-2 border border-primary/20 rounded text-primary hover:bg-primary/5 transition-colors">
+                    Next →
+                </button>
+            </div>
         </div>
     );
 };

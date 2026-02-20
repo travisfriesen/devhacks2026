@@ -1,34 +1,47 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Deck from "./pages/Deck";
-import Header from './components/Header/Header';
+import React from "react";
+
+import TabBar from "@/components/TabBar/TabBar";
+import Sidebar from "@/components/Sidebar/Sidebar";
+import Header from "@/components/Header/Header";
+import Dashboard from "@/pages/Dashboard";
+import Deck from "@/pages/Deck";
+
+import { useAppStore } from "@/store/useAppStore";
 
 const App = () => {
-    const navigate = useNavigate();
+    const { activeTabId, navView } = useAppStore();
+
+    const renderMain = () => {
+        if (activeTabId) return <Deck />;
+        if (navView === "decks") return <Dashboard />;
+        if (navView === "stats")
+            return (
+                <div className="p-8 font-ui text-primary/60">
+                    Stats — coming soon
+                </div>
+            );
+        if (navView === "settings")
+            return (
+                <div className="p-8 font-ui text-primary/60">
+                    Settings — coming soon
+                </div>
+            );
+    };
+
     return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="w-screen h-screen overflow-hidden flex flex-col bg-background">
             <Header />
-            <Routes>
-                <Route
-                    path="/"
-                    element={<Dashboard />}
-                />
-                <Route
-                    path="/decks/:deckId"
-                    element={<Deck />}
-                />
-                <Route
-                    path="*"
-                    element={
-                        <div>
-                            404 Not Found
-                            <button onClick={() => navigate("/")}>
-                                Go Home
-                            </button>
-                        </div>
-                    }
-                />
-            </Routes>
+            <Sidebar />
+            <div
+                className="flex flex-col flex-1 overflow-hidden"
+                style={{ paddingTop: "44px" }}>
+                <TabBar />
+                <div className="flex flex-1 overflow-hidden">
+                    <main className="flex-1 overflow-y-auto">
+                        {renderMain()}
+                    </main>
+                </div>
+            </div>
         </div>
     );
 };
