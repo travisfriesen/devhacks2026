@@ -1,17 +1,20 @@
 import fs from "fs"
 import YAML from "yaml"
-import {deck, card} from "./types/types"
+import {deck, card} from "./types/types" 
+import path from "path"
 
-export function parseYaml(path: string) : deck{
-    console.log("starting yaml parsing")
-    const myData = YAML.parse(fs.readFileSync(path, 'utf-8'))    
+export function parseYaml(yamlPath: string) : deck{
+    const myData = YAML.parse(fs.readFileSync(yamlPath, 'utf-8'))    
     
     let cardLists: Array<card> = [];
-    for (var i = 0; i < myData['deck'].length; i++) {
-        let curr = myData['deck'][i];
+
+    let randomUUID: string = crypto.randomUUID(); 
+
+    for (var i = 0; i < myData['cards'].length; i++) {
+        let curr = myData['cards'][i];
         let card: card = {
-            deckId: curr['deckId'],
-            cardId: curr['cardId'],
+            deckId: curr['deckId'] || randomUUID,
+            cardId: curr['cardId'] || i+1,
             question: curr['question'],
             answer: curr['answer'],
             laters: curr['laters'],
@@ -20,10 +23,10 @@ export function parseYaml(path: string) : deck{
         cardLists.push(card)
     }
 
-    let new_deck: deck = {
-        deckId: myData['deckId'],
-        deckName: myData['name'],
-        filepath: myData['filepath'],
+    let newDeck: deck = {
+        deckId: myData['deckId'] || randomUUID,
+        deckName: myData['name'] || myData['deckName'], // Fallback if user provides name or deckName
+        filepath: myData['filepath'] || path.resolve(yamlPath),
         lastUpdated: myData['lastUpdated'],
         created: myData['created'],
         uses: myData['uses'],
@@ -31,7 +34,10 @@ export function parseYaml(path: string) : deck{
         cards: cardLists,
     } 
 
-    return new_deck
+    return newDeck
 }
 
-
+export function dumpDeck(deckInfo:deck, path:string) {
+    let doc = YAML.stringify(deckInfo)
+    fs.writeFileSync(path+deckInfo.deckName+".yaml", doc, 'utf-8')
+}

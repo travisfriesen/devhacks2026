@@ -4,6 +4,7 @@ export interface IDeck {
     filepath: string;
     lastUpdated: Date;
     created: Date;
+    lastUtilized: Date;
     uses: number;
     streak: number;
     cards: Array<card>

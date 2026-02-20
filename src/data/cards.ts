@@ -1,49 +1,104 @@
 import { ICard } from "../types/types";
 
 /**
- * Gets a card from the database.
+ * Retrieves a card from the database.
  * Returns null if the card does not exist.
  * @param cardId
  * @param deckId
  */
-export function getCard(cardId: string, deckId: string): ICard {
+export function retrieveCard(cardId: string, deckId: string): card {
     return null;
 }
 
 /**
- * Gets all the cards from the database with the given deckId.
+ * Retrieves all the cards from the database with the given deckId.
  * Returns null if the deck does not exist.
  * @param deckId
  */
-export function getCards(deckId: string): ICard[] {
+export function retrieveCards(deckId: string): card[] {
     return null;
 }
 
 /**
- * Gets all the cards from the database.
+ * Retrieves all the cards from the database.
  * Returns null if the deck does not exist.
  */
-export function getAllCards(): card[] {
+export function retrieveAllCards(): card[] {
     return null;
 }
 
 /**
- * Sets the card in the database.
+ * Creates the card in the database.
  * Returns true if successful, false otherwise.
  * @param card
  * @param deckId
  */
-export function setCard(card: ICard, deckId: string): boolean {
+export function createCard(card: card, deckId: string): boolean {
     return false;
 }
 
 /**
- * Sets the cards in the database for the given deckId.
+ * Creates the cards in the database for the given deckId.
  * Should only be used on the first time a deck is created/imported.
- * Returns true if successful.
+ * Returns true if successful, false otherwise.
  * @param cards
  * @param deckId
  */
-export function setCards(cards: ICard[], deckId: string): boolean {
+export function createCards(cards: card[], deckId: string): boolean {
+    return false;
+}
+
+/**
+ * Deletes a card from the database for the given cardId and deckId
+ * Returns true if successful, false otherwise.
+ * @param cardId
+ * @param deckId
+ */
+export function deleteCard(cardId: string, deckId: string): boolean {
+    return false;
+}
+
+/**
+ * Deletes all card from the database for the given deckId
+ * Returns true if successful, false otherwise.
+ * @param deckId
+ */
+export function deleteAllCards(deckId: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the card's question for the given cardId and deckId
+ * @param card
+ * @param question
+ */
+export function updateCardQuestion(card: card, question: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the card's answer for the given cardId and deckId
+ * @param card
+ * @param answer
+ */
+export function updateCardAnswer(card: card, answer: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the card's later value for the given cardId and deckId
+ * @param card
+ * @param later
+ */
+export function updateCardLaters(card: card, later: number): boolean {
+    return false;
+}
+
+/**
+ * Updates the card's due date for the given cardId and deckId
+ * @param card
+ * @param dueDate
+ */
+export function updateCardDueDate(card: card, dueDate: Date): boolean {
     return false;
 }
