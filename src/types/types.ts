@@ -11,7 +11,7 @@ export interface deck {
 
 export interface card {
     deckId: string;
-    cardId: [string, string];
+    cardId: string;
     question: string;
     answer: string;
     laters: number;
