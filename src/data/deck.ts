@@ -1,28 +1,127 @@
 import { deck } from "../types/types";
 
 /**
- * Gets a deck from the database.
+ * Retrieves a deck from the database.
  * Returns null if the deck does not exist.
  * @param deckId
  */
-export function getDeck(deckId: string): deck {
+export function retrieveDeck(deckId: string): deck {
     return null;
 }
 
 /**
- * Gets all decks from the database.
+ * Retrieves all decks from the database.
  * Returns null if there are no decks.
  */
-export function getDecks(): deck[] {
+export function retrieveDecks(): deck[] {
     return null;
 }
 
 /**
- * Sets the deck in the database.
+ * Creates the deck in the database.
  * Returns true if successful, false otherwise.
- * @param deckID
+ * @param deckId
  * @param deck
  */
-export function setDeck(deckID: string, deck: deck): boolean {
+export function createDeck(deckId: string, deck: deck): boolean {
+    return false;
+}
+
+/**
+ * Deletes the deck in the database.
+ * Returns true if successful, false otherwise
+ * @param deckId
+ */
+export function deleteDeck(deckId: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's filepath in the database.
+ * Returns true if successful, false otherwise
+ * @param deck
+ * @param filepath
+ */
+export function updateDeckFilepath(deck: deck, filepath: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's name in the database.
+ * Returns true if successful, false otherwise
+ * @param deck
+ * @param name
+ */
+export function updateDeckName(deck: deck, name: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's last updated streak in the database.
+ * Returns true if successful, false otherwise
+ * @param deck
+ * @param date
+ */
+export function updateDeckLastUpdated(deck: deck, date: Date): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's uses in the database.
+ * Returns true if successful, false otherwise
+ * @param deck
+ * @param uses
+ */
+export function updateDeckUses(deck: deck, uses: number): boolean {
+    return false;
+}
+
+/**
+ * Updates the deck's streak in the database.
+ * Returns true if successful, false otherwise
+ * @param deck
+ * @param streak
+ */
+export function updateDeckStreak(deck: deck, streak: number): boolean {
+    const today = new Date();
+    // stupid yesterday function because Date.getDate(Date() -1) errors sometimes,
+    // and doesn't necessarily handle the ends of the months.
+    const yesterday = (): Date => {
+        let day = new Date().getDay();
+        let month = new Date().getMonth();
+        let year = new Date().getFullYear();
+
+        const day31 = [1, 3, 5, 7, 8, 10, 12];
+        const day30 = [4, 6, 9, 11];
+
+        if (day == 1) {
+            if (month == 1) {
+                month = 12;
+                year = year - 1;
+            } else {
+                month = month - 1;
+            }
+            if (day31.includes(month)) {
+                day = 31;
+            } else if (day30.includes(month)) {
+                day = 30;
+            } else {
+                //february's am i right?
+                day = 28;
+            }
+        } else {
+            day = day - 1;
+            month = month - 1;
+        }
+
+        return new Date(year, month, day);
+    };
+
+    if (deck.lastUtilized != today || deck.lastUtilized != yesterday()) {
+        deck.streak = 0;
+    } else {
+        deck.streak += 1;
+    }
+
     return false;
 }
