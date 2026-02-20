@@ -1,7 +1,8 @@
 import { deck } from "../types/types";
 
 /**
- * Gets a deck from the database. Returns null if the deck does not exist.
+ * Gets a deck from the database.
+ * Returns null if the deck does not exist.
  * @param deckId
  */
 export function getDeck(deckId: string): deck {
@@ -9,7 +10,16 @@ export function getDeck(deckId: string): deck {
 }
 
 /**
- * Sets the deck in the database. Returns true if successful, false otherwise.
+ * Gets all decks from the database.
+ * Returns null if there are no decks.
+ */
+export function getDecks(): deck[] {
+    return null;
+}
+
+/**
+ * Sets the deck in the database.
+ * Returns true if successful, false otherwise.
  * @param deckID
  * @param deck
  */
