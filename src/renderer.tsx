@@ -26,8 +26,10 @@
  * ```
  */
 
-import './index.css';
+import './theme/index.css';
+import App from './App';
+import { createRoot } from 'react-dom/client';
 
-console.log(
-  '👋 This message is being logged by "renderer.ts", included via Vite',
-);
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<App />);
