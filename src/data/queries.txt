@@ -32,6 +32,6 @@ INSERT INTO decks (deckId, filepath) VALUES (:deckId, :filepath)
 
 # deck.deleteDeck: deckId
 
-DELETE FROM cards where deckId = :deckId;
+DELETE FROM cards WHERE deckId = :deckId;
 DELETE FROM decks WHERE deckId = :deckId 
  
