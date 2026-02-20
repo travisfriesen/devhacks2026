@@ -1,49 +1,59 @@
 import { card } from "../types/types";
 
 /**
- * Gets a card from the database.
+ * Retrieves a card from the database.
  * Returns null if the card does not exist.
  * @param cardId
  * @param deckId
  */
-export function getCard(cardId: string, deckId: string): card {
+export function retrieveCard(cardId: string, deckId: string): card {
     return null;
 }
 
 /**
- * Gets all the cards from the database with the given deckId.
+ * Retrieves all the cards from the database with the given deckId.
  * Returns null if the deck does not exist.
  * @param deckId
  */
-export function getCards(deckId: string): card[] {
+export function retrieveCards(deckId: string): card[] {
     return null;
 }
 
 /**
- * Gets all the cards from the database.
+ * Retrieves all the cards from the database.
  * Returns null if the deck does not exist.
  */
-export function getAllCards(): card[] {
+export function retrieveAllCards(): card[] {
     return null;
 }
 
 /**
- * Sets the card in the database.
+ * Creates the card in the database.
  * Returns true if successful, false otherwise.
  * @param card
  * @param deckId
  */
-export function setCard(card: card, deckId: string): boolean {
+export function createCard(card: card, deckId: string): boolean {
     return false;
 }
 
 /**
- * Sets the cards in the database for the given deckId.
+ * Creates the cards in the database for the given deckId.
  * Should only be used on the first time a deck is created/imported.
- * Returns true if successful.
+ * Returns true if successful, false otherwise.
  * @param cards
  * @param deckId
  */
-export function setCards(cards: card[], deckId: string): boolean {
+export function createCards(cards: card[], deckId: string): boolean {
+    return false;
+}
+
+/**
+ * Deletes a card from the database for the given cardId and deckId
+ * Returns true if successful, false otherwise.
+ * @param cardId
+ * @param deckId
+ */
+export function deleteCard(cardId: string, deckId: string): boolean {
     return false;
 }
