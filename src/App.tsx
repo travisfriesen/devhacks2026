@@ -31,7 +31,6 @@ const App = () => {
 
     return (
         <div className="w-screen h-screen overflow-hidden flex flex-col bg-background">
-            <Header />
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar />
                 <div className="flex flex-col flex-1 overflow-hidden">

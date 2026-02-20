@@ -29,9 +29,12 @@
 import "./theme/index.css";
 import App from "./App";
 import { createRoot } from "react-dom/client";
+import { useAppStore } from "./store/useAppStore";
+
+window.electronAPI.onNavView((view) => {
+    useAppStore.getState().setNavView(view);
+});
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
-root.render(
-        <App />
-);
+root.render(<App />);

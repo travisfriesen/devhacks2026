@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, Menu, BrowserWindow } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
 
@@ -19,6 +19,56 @@ const createWindow = () => {
             nodeIntegration: true,
         },
     });
+
+    const menu = Menu.buildFromTemplate([
+        {
+            label: app.name,
+            submenu: [{ role: "quit" }],
+        },
+        {
+            label: "View",
+            submenu: [
+                {
+                    label: "Decks",
+                    accelerator: "CmdOrCtrl+1",
+                    click: () => {
+                        mainWindow.webContents.send("set-nav-view", "decks");
+                    },
+                },
+                {
+                    label: "Stats",
+                    accelerator: "CmdOrCtrl+2",
+                    click: () => {
+                        mainWindow.webContents.send("set-nav-view", "stats");
+                    },
+                },
+                {
+                    label: "Settings",
+                    accelerator: "CmdOrCtrl+3",
+                    click: () => {
+                        mainWindow.webContents.send("set-nav-view", "settings");
+                    },
+                },
+                { type: "separator" },
+                { role: "reload" },
+                { role: "forceReload" },
+                { role: "toggleDevTools" },
+            ],
+        },
+        {
+            label: "File",
+            submenu: [
+                {
+                    label: "Open Deck...",
+                    accelerator: "CmdOrCtrl+O",
+                    click: () =>
+                        mainWindow.webContents.send("open-file-dialog"),
+                },
+            ],
+        },
+    ]);
+
+    Menu.setApplicationMenu(menu);
 
     // and load the index.html of the app.
     if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
