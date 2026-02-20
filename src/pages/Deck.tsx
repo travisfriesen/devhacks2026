@@ -1,44 +1,51 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { Flashcard } from '../components/Flashcard';
+import { useAppStore } from "@/store/useAppStore";
+import { Flashcard } from "@/components/Flashcard";
 
 const Deck = () => {
-    const { deckId } = useParams();
-    const [currentIndex, setCurrentIndex] = React.useState(0);
-    const [flipped, setFlipped] = React.useState(false);
+    const { tabs, activeTabId, nextCard, prevCard, flipCard } = useAppStore();
+    const tab = tabs.find((t) => t.tabId === activeTabId);
 
-    const cards = [
-      {
-      id: 1,
-      question: "What is the capital of France?",
-      answer: "Paris"
-    },
-    {
-      id: 2,
-      question: "What is the largest planet in our solar system?",
-      answer: "Jupiter"
-    },
-    {
-      id: 3,
-      question: "What is the chemical symbol for water?",
-      answer: "H2O"
+    if (!tab) return null;
+
+    const cards = tab.deck.cards;
+
+    if (!cards || cards.length === 0) {
+        return (
+            <div className="flex items-center justify-center h-full font-ui text-sm text-primary/50">
+                No cards in this deck yet.
+            </div>
+        );
     }
-  ];
 
-  if(!cards || cards.length === 0) return <div>No cards in this deck</div>;
+    const current = cards[tab.currentIndex];
 
-  return (
-    <div>
-      <Flashcard 
-        flashcardId={cards[currentIndex].id}
-        question={cards[currentIndex].question}
-        answer={cards[currentIndex].answer}
-        flipped={flipped}
-        onClick={() => setFlipped(!flipped)}
-      />
-      <button onClick={() => setCurrentIndex((currentIndex + 1) % cards.length)}>Next</button>
-    </div>
-  );
+    return (
+        <div className="flex flex-col items-center justify-center h-full gap-6 p-8">
+            <p className="font-ui text-xs text-primary/40 uppercase tracking-widest">
+                {tab.currentIndex + 1} / {cards.length}
+            </p>
+
+            <Flashcard
+                {...current}
+                flipped={tab.flipped}
+                onClick={() => flipCard(tab.tabId)}
+            />
+
+            <div className="flex gap-3">
+                <button
+                    onClick={() => prevCard(tab.tabId)}
+                    className="font-ui text-sm px-5 py-2 border border-primary/20 rounded text-primary hover:bg-primary/5 transition-colors">
+                    ← Prev
+                </button>
+                <button
+                    onClick={() => nextCard(tab.tabId)}
+                    className="font-ui text-sm px-5 py-2 border border-primary/20 rounded text-primary hover:bg-primary/5 transition-colors">
+                    Next →
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default Deck;

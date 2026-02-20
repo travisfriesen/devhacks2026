@@ -1,4 +1,4 @@
-export interface deck {
+export interface IDeck {
     deckId: string;
     deckName: string;
     filepath: string;
@@ -10,7 +10,7 @@ export interface deck {
     cards: Array<card>
 }
 
-export interface card {
+export interface ICard {
     deckId: string;
     cardId: string;
     question: string;

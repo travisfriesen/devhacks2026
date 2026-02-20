@@ -1,4 +1,4 @@
-import { card } from "../types/types";
+import { ICard } from "../types/types";
 
 /**
  * Retrieves a card from the database.

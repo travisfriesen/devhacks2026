@@ -1,7 +1,25 @@
 @import "tailwindcss";
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@theme {
+    --color-primary: #23001e;
+    --color-secondary: #b9314f;
+    --color-tertiary: #c77dff;
+    --color-background: #f5f0ff;
+    --color-outline: #230903;
+    --color-paper: #fffdf7;
+    --font-ui: "Plus Jakarta Sans", sans-serif;
+}
+
+:root {
+    font-family: "Lexend", serif;
+    font-optical-sizing: auto;
+    font-size: 1rem;
+    font-weight: 500;
+    font-style: normal;
 }
