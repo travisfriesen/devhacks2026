@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS decks (
 -- Creates the cards table
 
 CREATE TABLE IF NOT EXISTS cards (
-    cardId TEXT PRIMARY KEY, 
+    cardId TEXT UNIQUE, 
     deckId INTEGER NOT NULL,
     question TEXT NOT NULL,
     answer TEXT NOT NULL,
