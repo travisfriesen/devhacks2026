@@ -1,1 +1,7 @@
-All queries will go here!
+# cards.getCard: cardId, deckId
+
+SELECT * FROM cards WHERE cardId = :cardId AND deckId = :deckId
+
+# cards.setCard: card, deckId
+
+INSERT INTO cards (cardId, deckId, question, answer) VALUES (:cardId, :deckId, :question, :answer)
