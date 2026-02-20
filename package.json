@@ -5,6 +5,9 @@
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "private": true,
+  "engines" : { 
+    "node" : "25.6.0"
+  },
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
