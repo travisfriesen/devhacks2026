@@ -14,6 +14,10 @@ SELECT * FROM cards
 
 INSERT INTO cards (cardId, deckId, question, answer) VALUES (:cardId, :deckId, :question, :answer)
 
+# cards.deleteCard: cardId, deckId
+
+DELETE FROM cards WHERE cardId = :cardId AND deckId = :deckId
+
 # deck.retrieveDeck: deckId
 
 SELECT * FROM decks WHERE deckId = :deckId
@@ -26,4 +30,8 @@ SELECT * FROM decks
 
 INSERT INTO decks (deckId, filepath) VALUES (:deckId, :filepath)
 
-# 
+# deck.deleteDeck: deckId
+
+DELETE FROM cards where deckId = :deckId;
+DELETE FROM decks WHERE deckId = :deckId 
+ 
