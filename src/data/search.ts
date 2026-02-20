@@ -1,6 +1,4 @@
 import { card, deck } from "../types/types";
-import {getDecks} from "./deck";
-import {getAllCards} from "./cards";
 
 /**
  * Searches by keyword and returns all decks that contain the keyword,
@@ -18,7 +16,7 @@ function searchByKeyword(keyword: string): [decks: deck[], cards: card[]] {
  * @param keyword
  */
 function searchDecks(keyword: string): deck[] {
-    return null
+    return null;
 }
 
 /**
@@ -26,6 +24,6 @@ function searchDecks(keyword: string): deck[] {
  * Returns an empty array if nothing is found.
  * @param keyword
  */
-function searchCards(keyword:string): card[] {
-    return null
+function searchCards(keyword: string): card[] {
+    return null;
 }
