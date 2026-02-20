@@ -18,6 +18,22 @@ INSERT INTO cards (cardId, deckId, question, answer) VALUES (:cardId, :deckId, :
 
 DELETE FROM cards WHERE cardId = :cardId AND deckId = :deckId
 
+# cards.updateCardQuestion: card, question
+
+UPDATE cards SET question = :question WHERE cardId = :cardId AND deckId = :deckId 
+
+# cards.updateCardAnswer: card, answer 
+
+UPDATE cards SET answer = :answer WHERE cardId = :cardId AND deckId = :deckId 
+
+# cards.updateCardLaters: card, later 
+
+UPDATE cards SET laters = :later WHERE cardId = :cardId AND deckId = :deckId 
+
+# cards.updateCardDueDate: card, dueDate
+
+UPDATE cards SET dueDate = :dueDate WHERE cardId = :cardId AND deckId = :deckId 
+
 # deck.retrieveDeck: deckId
 
 SELECT * FROM decks WHERE deckId = :deckId
