@@ -69,56 +69,36 @@ export function deleteAllCards(deckId: string): boolean {
 
 /**
  * Updates the card's question for the given cardId and deckId
- * @param deckId
- * @param cardId
+ * @param card
  * @param question
  */
-export function updateCardQuestion(
-    deckId: string,
-    cardId: string,
-    question: string,
-): boolean {
+export function updateCardQuestion(card: card, question: string): boolean {
     return false;
 }
 
 /**
  * Updates the card's answer for the given cardId and deckId
- * @param deckId
- * @param cardId
+ * @param card
  * @param answer
  */
-export function updateCardAnswer(
-    deckId: string,
-    cardId: string,
-    answer: string,
-): boolean {
+export function updateCardAnswer(card: card, answer: string): boolean {
     return false;
 }
 
 /**
  * Updates the card's later value for the given cardId and deckId
- * @param deckId
- * @param cardId
+ * @param card
  * @param later
  */
-export function updateCardLaters(
-    deckId: string,
-    cardId: string,
-    later: number,
-): boolean {
+export function updateCardLaters(card: card, later: number): boolean {
     return false;
 }
 
 /**
  * Updates the card's due date for the given cardId and deckId
- * @param deckId
- * @param cardId
+ * @param card
  * @param dueDate
  */
-export function updateCardDueDate(
-    deckId: string,
-    cardId: string,
-    dueDate: Date,
-): boolean {
+export function updateCardDueDate(card: card, dueDate: Date): boolean {
     return false;
 }

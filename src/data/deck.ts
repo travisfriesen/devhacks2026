@@ -39,58 +39,50 @@ export function deleteDeck(deckId: string): boolean {
 /**
  * Updates the deck's filepath in the database.
  * Returns true if successful, false otherwise
- * @param deckId
+ * @param deck
  * @param filepath
  */
-export function updateDeckFilepath(deckId: string, filepath: string): boolean {
+export function updateDeckFilepath(deck: deck, filepath: string): boolean {
     return false;
 }
 
 /**
  * Updates the deck's name in the database.
  * Returns true if successful, false otherwise
- * @param deckId
+ * @param deck
  * @param name
  */
-export function updateDeckName(deckId: string, name: string): boolean {
+export function updateDeckName(deck: deck, name: string): boolean {
     return false;
 }
 
 /**
  * Updates the deck's last updated streak in the database.
  * Returns true if successful, false otherwise
- * @param deckId
+ * @param deck
  * @param date
  */
-export function updateDeckLastUpdated(deckId: string, date: Date): boolean {
+export function updateDeckLastUpdated(deck: deck, date: Date): boolean {
     return false;
 }
 
 /**
  * Updates the deck's uses in the database.
  * Returns true if successful, false otherwise
- * @param deckId
+ * @param deck
  * @param uses
  */
-export function updateDeckUses(deckId: string, uses: number): boolean {
+export function updateDeckUses(deck: deck, uses: number): boolean {
     return false;
 }
 
 /**
  * Updates the deck's streak in the database.
  * Returns true if successful, false otherwise
- * @param deckId
+ * @param deck
  * @param streak
  */
-export function updateDeckStreak(deckId: string, streak: number): boolean {
-    return false;
-}
-
-/**
- * Increments the Deck Streak
- * @param deck
- */
-function incrementDeckStreak(deck: deck) {
+export function updateDeckStreak(deck: deck, streak: number): boolean {
     const today = new Date();
     // stupid yesterday function because Date.getDate(Date() -1) errors sometimes,
     // and doesn't necessarily handle the ends of the months.
@@ -131,5 +123,5 @@ function incrementDeckStreak(deck: deck) {
         deck.streak += 1;
     }
 
-    updateDeckStreak(deck.deckId, deck.streak);
+    return false;
 }
