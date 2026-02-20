@@ -57,3 +57,68 @@ export function createCards(cards: card[], deckId: string): boolean {
 export function deleteCard(cardId: string, deckId: string): boolean {
     return false;
 }
+
+/**
+ * Deletes all card from the database for the given deckId
+ * Returns true if successful, false otherwise.
+ * @param deckId
+ */
+export function deleteAllCards(deckId: string): boolean {
+    return false;
+}
+
+/**
+ * Updates the card's question for the given cardId and deckId
+ * @param deckId
+ * @param cardId
+ * @param question
+ */
+export function updateCardQuestion(
+    deckId: string,
+    cardId: string,
+    question: string,
+): boolean {
+    return false;
+}
+
+/**
+ * Updates the card's answer for the given cardId and deckId
+ * @param deckId
+ * @param cardId
+ * @param answer
+ */
+export function updateCardAnswer(
+    deckId: string,
+    cardId: string,
+    answer: string,
+): boolean {
+    return false;
+}
+
+/**
+ * Updates the card's later value for the given cardId and deckId
+ * @param deckId
+ * @param cardId
+ * @param later
+ */
+export function updateCardLaters(
+    deckId: string,
+    cardId: string,
+    later: number,
+): boolean {
+    return false;
+}
+
+/**
+ * Updates the card's due date for the given cardId and deckId
+ * @param deckId
+ * @param cardId
+ * @param dueDate
+ */
+export function updateCardDueDate(
+    deckId: string,
+    cardId: string,
+    dueDate: Date,
+): boolean {
+    return false;
+}

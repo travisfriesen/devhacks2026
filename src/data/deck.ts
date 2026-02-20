@@ -91,23 +91,23 @@ export function updateDeckStreak(deckId: string, streak: number): boolean {
  * @param deck
  */
 function incrementDeckStreak(deck: deck) {
-    const today = new Date()
+    const today = new Date();
     // stupid yesterday function because Date.getDate(Date() -1) errors sometimes,
     // and doesn't necessarily handle the ends of the months.
-    const yesterday = ():Date => {
+    const yesterday = (): Date => {
         let day = new Date().getDay();
         let month = new Date().getMonth();
         let year = new Date().getFullYear();
 
-        const day31 = [1,3,5,7,8,10,12];
-        const day30 = [4,6,9,11];
+        const day31 = [1, 3, 5, 7, 8, 10, 12];
+        const day30 = [4, 6, 9, 11];
 
         if (day == 1) {
             if (month == 1) {
                 month = 12;
                 year = year - 1;
             } else {
-                month = month -1
+                month = month - 1;
             }
             if (day31.includes(month)) {
                 day = 31;
@@ -131,5 +131,5 @@ function incrementDeckStreak(deck: deck) {
         deck.streak += 1;
     }
 
-    // setDeck(deck.deckId, deck);
+    updateDeckStreak(deck.deckId, deck.streak);
 }
