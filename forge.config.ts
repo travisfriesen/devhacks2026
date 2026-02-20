@@ -25,7 +25,7 @@ const config: ForgeConfig = {
             build: [
                 {
                     // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
-                    entry: "src/main.ts",
+                    entry: "src/main.tsx",
                     config: "vite.main.config.ts",
                     target: "main",
                 },
@@ -38,7 +38,7 @@ const config: ForgeConfig = {
             renderer: [
                 {
                     name: "main_window",
-                    config: "vite.renderer.config.ts",
+                    config: "vite.renderer.config.mts",
                 },
             ],
         }),

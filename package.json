@@ -5,8 +5,8 @@
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "private": true,
-  "engines" : { 
-    "node" : "25.6.0"
+  "engines": {
+    "node": "25.6.0"
   },
   "scripts": {
     "start": "electron-forge start",
@@ -17,6 +17,8 @@
     "lint:fix": "eslint --ext .ts,.tsx . --fix && prettier . --write"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-react": "^7.28.5",
     "@electron-forge/cli": "^7.11.1",
     "@electron-forge/maker-deb": "^7.11.1",
     "@electron-forge/maker-rpm": "^7.11.1",
@@ -27,6 +29,12 @@
     "@electron-forge/plugin-vite": "^7.11.1",
     "@electron/fuses": "^1.8.0",
     "@types/electron-squirrel-startup": "^1.0.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-react": "^5.1.4",
+    "babel-loader": "^10.0.0",
     "electron": "40.6.0",
     "eslint": "^9.39.1",
     "eslint-plugin-import": "^2.32.0",
@@ -38,6 +46,9 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.0",
     "sqlite3": "^5.1.7",
     "yaml": "^2.8.2"
   }
