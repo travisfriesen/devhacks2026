@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from "electron";
-import path, { parse } from "node:path";
+import path from "node:path";
 import started from "electron-squirrel-startup";
-import { dumpDeck, parseYaml } from "./yamlparse";
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -30,9 +30,6 @@ const createWindow = () => {
             ),
         );
     }
-    let deck = parseYaml("./deck_one.yaml");
-    console.log(deck)
-    dumpDeck(deck, "./a")
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
 };
