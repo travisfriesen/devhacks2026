@@ -1,6 +1,5 @@
 import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
-import { Database } from "sqlite3"
+import { Database, open} from 'sqlite'
 
 export class AppDB {
     private static instance: AppDB
@@ -9,13 +8,13 @@ export class AppDB {
     private constructor() {
         (async () => {
             // open the database
-            const db = await open({
-                filename: '/cards.db',
+             this.db = await open({
+                filename: 'src/database/cards.db',
                 driver: sqlite3.Database
             })
 
             // create decks table
-            await db.exec(`
+            await this.db.exec(`
                 CREATE TABLE IF NOT EXISTS decks (
                     deckId INTEGER PRIMARY KEY AUTOINCREMENT,
                     filepath TEXT NOT NULL,
@@ -26,7 +25,7 @@ export class AppDB {
             `)
 
             // create cards table
-            await db.exec(`
+            await this.db.exec(`
                 CREATE TABLE IF NOT EXISTS cards (
                     cardId INTEGER PRIMARY KEY AUTOINCREMENT,
                     deckId INTEGER NOT NULL,
@@ -46,5 +45,4 @@ export class AppDB {
         }
         return AppDB.instance;
     }
-
 }
