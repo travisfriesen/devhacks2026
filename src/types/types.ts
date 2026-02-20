@@ -6,11 +6,12 @@ export interface IDeck {
     created: Date;
     uses: number;
     streak: number;
+    cards: Array<card>
 }
 
 export interface ICard {
     deckId: string;
-    cardId: [string, string];
+    cardId: string;
     question: string;
     answer: string;
     laters: number;
