@@ -9,7 +9,7 @@ export class AppDB {
         (async () => {
             // open the database
              this.db = await open({
-                filename: 'src/database/cards.db',
+                filename: 'src/data/cards.db',
                 driver: sqlite3.Database
             })
 
