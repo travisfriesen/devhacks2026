@@ -1,10 +1,10 @@
 import fs from "fs"
 import YAML from "yaml"
-import {deck, card} from "./types/types"
+import {deck, card} from "./types/types" 
+import path from "path"
 
-export function parseYaml(path: string) : deck{
-    console.log("starting yaml parsing")
-    const myData = YAML.parse(fs.readFileSync(path, 'utf-8'))    
+export function parseYaml(yaml_path: string) : deck{
+    const myData = YAML.parse(fs.readFileSync(yaml_path, 'utf-8'))    
     
     let cardLists: Array<card> = [];
 
@@ -26,7 +26,7 @@ export function parseYaml(path: string) : deck{
     let new_deck: deck = {
         deckId: myData['deckId'] || randomUUID,
         deckName: myData['name'] || myData['deckName'], // Fallback if user provides name or deckName
-        filepath: myData['filepath'],
+        filepath: myData['filepath'] || path.resolve(yaml_path),
         lastUpdated: myData['lastUpdated'],
         created: myData['created'],
         uses: myData['uses'],
