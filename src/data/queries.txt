@@ -1,24 +1,29 @@
-# cards.getCard: cardId, deckId
+# cards.retrieveCard: cardId, deckId
 
 SELECT * FROM cards WHERE cardId = :cardId AND deckId = :deckId
 
-# cards.getCards: deckId
+# cards.retrieveCards: deckId
 
 SELECT * FROM cards WHERE deckId = :deckId
 
-# cards.setCard: card, deckId
+# cards.retrieveAllCards: 
+
+SELECT * FROM cards
+
+# cards.createCard: card, deckId
 
 INSERT INTO cards (cardId, deckId, question, answer) VALUES (:cardId, :deckId, :question, :answer)
 
-# deck.getDeck: deckId
+# deck.retrieveDeck: deckId
 
 SELECT * FROM decks WHERE deckId = :deckId
 
-# deck.getDecks: 
+# deck.retrieveDecks: 
 
 SELECT * FROM decks
 
-# deck.setDeck: deckId, deck
+# deck.createDeck: deckId, deck
 
 INSERT INTO decks (deckId, filepath) VALUES (:deckId, :filepath)
 
+# 
