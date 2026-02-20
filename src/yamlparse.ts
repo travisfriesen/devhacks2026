@@ -3,8 +3,8 @@ import YAML from "yaml"
 import {deck, card} from "./types/types" 
 import path from "path"
 
-export function parseYaml(yaml_path: string) : deck{
-    const myData = YAML.parse(fs.readFileSync(yaml_path, 'utf-8'))    
+export function parseYaml(yamlPath: string) : deck{
+    const myData = YAML.parse(fs.readFileSync(yamlPath, 'utf-8'))    
     
     let cardLists: Array<card> = [];
 
@@ -23,10 +23,10 @@ export function parseYaml(yaml_path: string) : deck{
         cardLists.push(card)
     }
 
-    let new_deck: deck = {
+    let newDeck: deck = {
         deckId: myData['deckId'] || randomUUID,
         deckName: myData['name'] || myData['deckName'], // Fallback if user provides name or deckName
-        filepath: myData['filepath'] || path.resolve(yaml_path),
+        filepath: myData['filepath'] || path.resolve(yamlPath),
         lastUpdated: myData['lastUpdated'],
         created: myData['created'],
         uses: myData['uses'],
@@ -34,10 +34,10 @@ export function parseYaml(yaml_path: string) : deck{
         cards: cardLists,
     } 
 
-    return new_deck
+    return newDeck
 }
 
-export function dumpDeck(deck_info:deck, path:string) {
-    let doc = YAML.stringify(deck_info)
-    fs.writeFileSync(path+deck_info.deckName+".yaml", doc, 'utf-8')
+export function dumpDeck(deckInfo:deck, path:string) {
+    let doc = YAML.stringify(deckInfo)
+    fs.writeFileSync(path+deckInfo.deckName+".yaml", doc, 'utf-8')
 }
