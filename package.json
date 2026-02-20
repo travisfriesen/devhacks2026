@@ -28,6 +28,7 @@
     "@electron-forge/plugin-fuses": "^7.11.1",
     "@electron-forge/plugin-vite": "^7.11.1",
     "@electron/fuses": "^1.8.0",
+    "@tailwindcss/vite": "^4.2.0",
     "@types/electron-squirrel-startup": "^1.0.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -45,11 +46,13 @@
     "vite": "^5.4.21"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.2.0",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.0",
     "sqlite3": "^5.1.7",
+    "tailwindcss": "^4.2.0",
     "yaml": "^2.8.2"
   }
 }
