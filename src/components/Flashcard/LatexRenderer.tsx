@@ -72,8 +72,7 @@ const LatexRenderer: React.FC<Props> = ({ text }) => {
                     return (
                         <span
                             key={i}
-                            className="font-latex"
-                            className="block my-2"
+                            className="font-latex block my-2"
                             dangerouslySetInnerHTML={{
                                 __html: renderMath(seg.content, true),
                             }}

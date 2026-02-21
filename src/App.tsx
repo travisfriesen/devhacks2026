@@ -8,6 +8,7 @@ import Dashboard from "@/pages/Dashboard";
 import Deck from "@/pages/Deck";
 
 import { useAppStore } from "@/store/useAppStore";
+import Editor from "@/pages/Editor";
 
 const App = () => {
     const { activeTabId, navView } = useAppStore();
@@ -24,7 +25,8 @@ const App = () => {
         if (navView === "settings")
             return (
                 <div className="p-8 font-ui text-primary/60">
-                    Settings — coming soon
+                    {/*Settings — coming soon*/}
+                    <Editor />
                 </div>
             );
     };
