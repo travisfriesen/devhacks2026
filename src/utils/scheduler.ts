@@ -55,7 +55,7 @@ export function scheduleCard(
             let tomorrow = incrementDate(card.dueDate, 1);
 
             updatedCard.dueDate = tomorrow;
-            updateCardDueDate(card, tomorrow);
+            window.electronAPI.updateCard(card, "dueDate", tomorrow);
 
             break;
         case 4: // later
@@ -63,8 +63,10 @@ export function scheduleCard(
             let newDueDate = incrementDate(card.dueDate, fibonacci(card.laters));
 
             updatedCard.dueDate = newDueDate;
-            updateCardDueDate(card, newDueDate);
-            updateCardLaters(card, card.laters+1);
+            updatedCard.laters = card.laters+1;
+            window.electronAPI.updateCard(card, "dueDate", newDueDate);
+            window.electronAPI.updateCard(card, "laters", card.laters+1);
+
             break;
     }
 
