@@ -10,7 +10,7 @@ let db: Database | undefined;
  * Returns empty arrays if nothing is found.
  * @param keyword
  */
-function searchByKeyword(keyword: string): [decks: IDeck[], cards: ICard[]] {
+export function searchByKeyword(keyword: string): [decks: IDeck[], cards: ICard[]] {
     return [searchDecks(keyword), searchCards(keyword)];
 }
 
@@ -19,13 +19,13 @@ function searchByKeyword(keyword: string): [decks: IDeck[], cards: ICard[]] {
  * Returns an empty array if nothing is found.
  * @param keyword
  */
-function searchDecks(keyword: string): IDeck[] {
+export function searchDecks(keyword: string): IDeck[] {
     if (db === undefined) {
         db = getDatabase();
     }
 
     const statement = db.prepare(
-        `SELECT * FROM decks WHERE name LIKE '%' + ? '%'`,
+        `SELECT * FROM decks WHERE name LIKE '%' || ? || '%'`,
     );
 
     return statement.all(keyword);
@@ -36,14 +36,14 @@ function searchDecks(keyword: string): IDeck[] {
  * Returns an empty array if nothing is found.
  * @param keyword
  */
-function searchCards(keyword: string): ICard[] {
+export function searchCards(keyword: string): ICard[] {
     if (db === undefined) {
         db = getDatabase();
     }
 
     const statement = db.prepare(
-        `SELECT * FROM cards WHERE question LIKE '%' + ?  + '%' OR answer LIKE '%' + ? + '%'`,
+        `SELECT * FROM cards WHERE question LIKE '%' || ? || '%' OR answer LIKE '%' || ? || '%'`,
     );
 
-    return statement.all(keyword);
+    return statement.all(keyword, keyword);
 }

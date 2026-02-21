@@ -1,8 +1,26 @@
 import { IDeck } from "../types/types";
-import { getDatabase } from "@/data/database";
+import { getDatabase } from "./database";
 
 // @ts-expect-error aaaaHHHH
 let db: Database | undefined;
+
+function fixDeckType(deck: Record<string, unknown>): IDeck {
+    return {
+        deckId: deck.deckId as string,
+        deckName: (deck.name ?? deck.deckName) as string, // DB column is 'name', IDeck uses 'deckName'
+        filepath: deck.filepath as string,
+        lastUpdated: new Date(deck.lastUpdated as string),
+        lastUtilized: new Date(deck.lastUtilized as string),
+        created: new Date(deck.created as string),
+        uses: deck.uses as number,
+        streak: deck.streak as number,
+        cards: [],
+    };
+}
+
+function fixDeckTypeArray(decks: Record<string, unknown>[]): IDeck[] {
+    return decks.map(fixDeckType);
+}
 
 /**
  * Retrieves a deck from the database.
@@ -16,7 +34,8 @@ export function retrieveDeck(deckId: string): IDeck {
 
     const statement = db.prepare(`SELECT * FROM decks WHERE deckId = ?`);
 
-    return statement.get(deckId);
+    const output = statement.get(deckId);
+    return fixDeckType(output);
 }
 
 /**
@@ -30,7 +49,8 @@ export function retrieveDecks(): IDeck[] {
 
     const statement = db.prepare(`SELECT * FROM decks`);
 
-    return statement.all();
+    const output = statement.all();
+    return fixDeckTypeArray(output);
 }
 
 /**
@@ -48,7 +68,7 @@ export function createDeck(deckId: string, deck: IDeck): boolean {
         `INSERT INTO decks (deckId, name, filepath) VALUES (?,?,?)`,
     );
 
-    return statement.run(deckId, deck.deckName, deck.filepath);
+    return statement.run(deckId, deck.deckName, deck.filepath).changes > 0;
 }
 
 /**
@@ -63,7 +83,7 @@ export function deleteDeck(deckId: string): boolean {
 
     const statement = db.prepare(`DELETE FROM decks WHERE deckId = ?`);
 
-    return statement.run(deckId);
+    return statement.run(deckId).changes > 0;
 }
 
 /**
@@ -81,7 +101,7 @@ export function updateDeckFilepath(deck: IDeck, filepath: string): boolean {
         `UPDATE decks SET filepath = ? WHERE deckId = ?`,
     );
 
-    return statement.run(filepath, deck.deckId);
+    return statement.run(filepath, deck.deckId).changes > 0;
 }
 
 /**
@@ -97,7 +117,7 @@ export function updateDeckName(deck: IDeck, name: string): boolean {
 
     const statement = db.prepare(`UPDATE decks SET name = ? WHERE deckId = ?`);
 
-    return statement.run(name, deck.deckId);
+    return statement.run(name, deck.deckId).changes > 0;
 }
 
 /**
@@ -112,10 +132,11 @@ export function updateDeckLastUpdated(deck: IDeck, date: Date): boolean {
     }
 
     const statement = db.prepare(
-        `UPDATE decks SET name = ? WHERE lastUpdated = ?`,
+        `UPDATE decks SET lastUpdated = ? WHERE deckId = ?`,
     );
 
-    return statement.run(deck.deckName, date);
+    const dateStr = date instanceof Date ? date.toISOString().slice(0, 10) : String(date);
+    return statement.run(dateStr, deck.deckId).changes > 0;
 }
 
 /**
@@ -129,9 +150,9 @@ export function updateDeckUses(deck: IDeck, uses: number): boolean {
         db = getDatabase();
     }
 
-    const statement = db.prepare(`UPDATE decks SET name = ? WHERE uses = ?`);
+    const statement = db.prepare(`UPDATE decks SET uses = ? WHERE deckId = ?`);
 
-    return statement.run(deck.deckName, uses);
+    return statement.run(uses, deck.deckId).changes > 0;
 }
 
 /**
@@ -145,48 +166,28 @@ export function updateDeckStreak(deck: IDeck): boolean {
         db = getDatabase();
     }
 
-    const statement = db.prepare(`UPDATE decks SET name = ? WHERE streak = ?`);
+    const statement = db.prepare(
+        `UPDATE decks SET streak = ?, lastUtilized = ? WHERE deckId = ?`,
+    );
 
-    const today = new Date();
-    // stupid yesterday function because Date.getDate(Date() -1) errors sometimes,
-    // and doesn't necessarily handle the ends of the months.
-    // TODO: ACCOUNT FOR LEAP YEARS
-    const yesterday = (): Date => {
-        let day = new Date().getUTCDate();
-        let month = new Date().getUTCMonth();
-        let year = new Date().getFullYear();
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().slice(0, 10);
 
-        const day31 = [1, 3, 5, 7, 8, 10, 12];
-        const day30 = [4, 6, 9, 11];
+    const lastUtilizedStr =
+        deck.lastUtilized instanceof Date
+            ? deck.lastUtilized.toISOString().slice(0, 10)
+            : String(deck.lastUtilized).slice(0, 10);
 
-        if (day == 1) {
-            if (month == 0) {
-                month = 11;
-                year = year - 1;
-            } else {
-                month = month - 1;
-            }
-            if (day31.includes(month+1)) {
-                day = 31;
-            } else if (day30.includes(month+1)) {
-                day = 30;
-            } else {
-                //february's am i right?
-                day = 28;
-            }
-        } else {
-            day = day - 1;
-            month = month - 1;
-        }
-
-        return new Date(year, month, day);
-    };
-
-    if (deck.lastUtilized != today || deck.lastUtilized != yesterday()) {
-        deck.streak = 0;
+    let newStreak: number;
+    if (lastUtilizedStr === todayStr) {
+        newStreak = deck.streak; // already updated today
+    } else if (lastUtilizedStr === yesterdayStr) {
+        newStreak = deck.streak + 1; // consecutive day
     } else {
-        deck.streak += 1;
+        newStreak = 1; // streak broken
     }
 
-    return statement.run(deck.deckName, deck.streak);
+    return statement.run(newStreak, todayStr, deck.deckId).changes > 0;
 }

@@ -23,7 +23,7 @@ export function getDatabase() {
 );`);
     const makeCards = db.prepare(`CREATE TABLE IF NOT EXISTS cards (
     cardId TEXT UNIQUE, 
-    deckId INTEGER NOT NULL,
+    deckId TEXT NOT NULL,
     question TEXT NOT NULL,
     answer TEXT NOT NULL,
     laters INTEGER DEFAULT 0 NOT NULL,

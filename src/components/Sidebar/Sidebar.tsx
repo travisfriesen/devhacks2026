@@ -8,7 +8,7 @@ import {
     Star,
 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { MOCK_DECKS, BOTTOM_NAV } from "@/global/constants";
+import { BOTTOM_NAV } from "@/global/constants";
 
 const Sidebar = () => {
     const {
@@ -20,13 +20,13 @@ const Sidebar = () => {
         decks,
         navView,
         setNavView,
-        setDecks,
         pinnedDeckIds,
         togglePinDeck,
+        loadDecksFromDB,
     } = useAppStore();
 
     useEffect(() => {
-        if (decks.length === 0) setDecks(MOCK_DECKS);
+        loadDecksFromDB();
     }, []);
     const handleOpenFile = async () => {
         const path = await window.electronAPI.openFile();
@@ -38,16 +38,20 @@ const Sidebar = () => {
             className="h-full shrink-0 bg-primary border-r border-secondary/30 flex flex-col transition-all duration-200 overflow-hidden"
             style={{ width: sidebarVisible ? "13rem" : "2.75rem" }}>
             <div
-                className="flex items-center border-b border-secondary/20 shrink-0"
+                className="flex items-center justify-between border-b border-secondary/20 shrink-0 text-paper/40 hover:text-paper hover:bg-secondary/10"
                 style={{
                     height: "44px",
                     padding: sidebarVisible ? "0 0.75rem" : "0",
                 }}>
                 {sidebarVisible ? (
                     <>
-                        <span className="font-display italic text-xl text-paper/80 tracking-wide flex-1 select-none pl-1">
-                            gg, get flashed
-                        </span>
+                        <button
+                            className={``}
+                        onClick={() => setNavView("decks")}>
+                            <img className={`hover:brightness-200`} src={"logo.png"} alt={"Logo"} style={{
+                                maxHeight: "40px"
+                            }} />
+                        </button>
                         <button
                             onClick={toggleSidebar}
                             className="p-1.5 text-paper/40 hover:text-paper transition-colors"
@@ -57,11 +61,18 @@ const Sidebar = () => {
                     </>
                 ) : (
                     <button
-                        onClick={toggleSidebar}
-                        className="w-full flex items-center justify-center py-3 text-paper/40 hover:text-paper transition-colors"
-                        title="Show sidebar">
-                        <PanelLeft className="w-4 h-4" />
+                        className={``}
+                        onClick={toggleSidebar}>
+                        <img className={`hover:brightness-200`} src={"logo.png"} alt={"Logo"} style={{
+                            maxHeight: "40px"
+                        }} />
                     </button>
+                    // <button
+                    //     onClick={toggleSidebar}
+                    //     className="w-full flex items-center justify-center py-3 text-paper/40 hover:text-paper transition-colors"
+                    //     title="Show sidebar">
+                    //     <PanelLeft className="w-4 h-4" />
+                    // </button>
                 )}
             </div>
 
