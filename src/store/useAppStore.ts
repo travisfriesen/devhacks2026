@@ -3,7 +3,6 @@ import { persist, StorageValue } from "zustand/middleware";
 import { ICard, IDeck } from "@/types/types";
 import { RecallRating, scheduleCard } from "@/utils/scheduler";
 import { FontSize, applyTheme } from "@/utils/applyTheme";
-import { retrieveDecks } from "@/data/deck";
 
 // Custom storage that revives ISO date strings back into Date objects on read.
 const isoDateRe = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/; // holy chatgpt generated this
@@ -138,7 +137,7 @@ export const useAppStore = create<AppState>()(
             openEditor: (deckId) =>
                 set({ navView: "editor", editingDeckId: deckId }),
 
-            updateCard: (deckId, card) =>
+            updateCard: (deckId, card) => {
                 set((state) => ({
                     decks: state.decks.map((d) =>
                         d.deckId === deckId
@@ -150,18 +149,23 @@ export const useAppStore = create<AppState>()(
                               }
                             : d,
                     ),
-                })),
+                }));
+                window.electronAPI.updateCard(card, "question", card.question).catch(console.error);
+                window.electronAPI.updateCard(card, "answer", card.answer).catch(console.error);
+            },
 
-            addCard: (deckId, card) =>
+            addCard: (deckId, card) => {
                 set((state) => ({
                     decks: state.decks.map((d) =>
                         d.deckId === deckId
                             ? { ...d, cards: [...d.cards, card] }
                             : d,
                     ),
-                })),
+                }));
+                window.electronAPI.createCard(card, deckId).catch(console.error);
+            },
 
-            deleteCard: (deckId, cardId) =>
+            deleteCard: (deckId, cardId) => {
                 set((state) => ({
                     decks: state.decks.map((d) =>
                         d.deckId === deckId
@@ -173,7 +177,9 @@ export const useAppStore = create<AppState>()(
                               }
                             : d,
                     ),
-                })),
+                }));
+                window.electronAPI.deleteCard(cardId, deckId).catch(console.error);
+            },
 
             openTab: (deck) => {
                 const now = new Date();
@@ -189,10 +195,12 @@ export const useAppStore = create<AppState>()(
                         activeTabId: existingTab.tabId,
                         decks: state.decks.map((d) =>
                             d.deckId === deck.deckId
-                                ? { ...d, lastUtilized: now }
+                                ? { ...d, lastUtilized: now, uses: d.uses + 1 }
                                 : d,
                         ),
                     }));
+                    window.electronAPI.updateDeck(deck, "uses", deck.uses + 1).catch(console.error);
+                    window.electronAPI.updateDeck(deck, "streak", null).catch(console.error);
                     return;
                 }
 
@@ -214,10 +222,12 @@ export const useAppStore = create<AppState>()(
                     navView: "decks",
                     decks: state.decks.map((d) =>
                         d.deckId === deck.deckId
-                            ? { ...d, lastUtilized: now }
+                            ? { ...d, lastUtilized: now, uses: d.uses + 1 }
                             : d,
                     ),
                 }));
+                window.electronAPI.updateDeck(deck, "uses", deck.uses + 1).catch(console.error);
+                window.electronAPI.updateDeck(deck, "streak", null).catch(console.error);
             },
             closeTab: (tabId) => {
                 set((state) => {
@@ -281,16 +291,21 @@ export const useAppStore = create<AppState>()(
             },
 
             answerCard: (tabId, rating) => {
+                // Hoist card + schedule computation so we can fire IPC after set()
+                const currentTab = get().tabs.find((t) => t.tabId === tabId);
+                if (!currentTab || currentTab.queue.length === 0) return;
+                const [currentCard] = currentTab.queue;
+                const { updatedCard } = scheduleCard(
+                    currentCard,
+                    rating,
+                    currentTab.queue,
+                );
+
                 set((state) => ({
                     tabs: state.tabs.map((tab) => {
                         if (tab.tabId !== tabId || tab.queue.length === 0)
                             return tab;
-                        const [current, ...rest] = tab.queue;
-                        const { updatedCard } = scheduleCard(
-                            current,
-                            rating,
-                            tab.queue,
-                        );
+                        const [, ...rest] = tab.queue;
                         const updatedDeckCards = tab.deck.cards.map((c) =>
                             c.cardId === updatedCard.cardId ? updatedCard : c,
                         );
@@ -324,12 +339,16 @@ export const useAppStore = create<AppState>()(
                             // Only add to history when the card leaves the session (3/4),
                             // not when it's recycled (1/2) — otherwise prevCard creates duplicates
                             history: isPermanentlyScheduled
-                                ? [...tab.history, current]
+                                ? [...tab.history, currentCard]
                                 : tab.history,
                             deck: { ...tab.deck, cards: updatedDeckCards },
                         };
                     }),
                 }));
+
+                // Persist scheduling data to DB
+                window.electronAPI.updateCard(updatedCard, "dueDate", updatedCard.dueDate).catch(console.error);
+                window.electronAPI.updateCard(updatedCard, "laters", updatedCard.laters).catch(console.error);
                 get().incrementReviewed();
             },
 

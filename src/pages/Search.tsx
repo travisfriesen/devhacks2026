@@ -1,35 +1,44 @@
-import React from "react";
-import { TrendingUp, Calendar, Flame } from "lucide-react";
+import React, { useState } from "react";
+import { Search as SearchIcon } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { HEATMAP } from "@/global/constants";
-
-function heatColor(intensity: number): string {
-    if (intensity === 0) return "bg-transparent";
-    if (intensity <= 0.25) return "bg-primary/25";
-    if (intensity <= 0.5) return "bg-primary/50";
-    if (intensity <= 0.75) return "bg-primary/75";
-    return "bg-primary";
-}
 
 const Search = () => {
     const { decks, openTab } = useAppStore();
+    const [query, setQuery] = useState("");
 
     const allCards = decks.flatMap((deck) =>
         deck.cards.map((card) => ({ ...card, deckName: deck.deckName })),
     );
 
-    const totalStreak = decks.reduce(
-        (sum, deck) => Math.max(sum, deck.streak),
-        0,
-    );
-    const totalCards = allCards.length;
+    const filteredCards = query.trim()
+        ? allCards.filter(
+            (c) =>
+                c.question.toLowerCase().includes(query.toLowerCase()) ||
+                c.answer.toLowerCase().includes(query.toLowerCase()) ||
+                c.deckName.toLowerCase().includes(query.toLowerCase()),
+        )
+        : allCards;
 
     return (
         <div className="flex-1 h-full overflow-y-auto p-8">
-            <div className="max-w-4xl mx-auto space-y-10">
+            <div className="max-w-4xl mx-auto space-y-6">
+                {/* Search input */}
+                <div className="relative">
+                    <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/30 pointer-events-none" />
+                    <input
+                        type="text"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search questions, answers, or decks…"
+                        className="w-full pl-10 pr-4 py-2.5 font-ui text-sm bg-paper border border-primary/15 rounded-xl text-primary placeholder:text-primary/30 focus:outline-none focus:border-secondary/50 transition-colors"
+                    />
+                </div>
+
                 <section>
                     <p className="font-ui text-xs uppercase tracking-widest text-primary/35 mb-3">
-                        All Cards
+                        {query.trim()
+                            ? `${filteredCards.length} result${filteredCards.length !== 1 ? "s" : ""}`
+                            : "All Cards"}
                     </p>
                     <div
                         className="border border-primary/10 rounded-xl overflow-hidden bg-paper"
@@ -52,31 +61,30 @@ const Search = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {allCards.length === 0 ? (
+                                {filteredCards.length === 0 ? (
                                     <tr>
                                         <td
                                             colSpan={4}
                                             className="px-5 py-8 text-center font-ui text-sm text-primary/30">
-                                            No cards yet — open a deck from the
-                                            sidebar
+                                            {query.trim()
+                                                ? "No cards match your search"
+                                                : "No cards yet — open a deck from the sidebar"}
                                         </td>
                                     </tr>
                                 ) : (
-                                    allCards.map((card, index) => (
+                                    filteredCards.map((card) => (
                                         <tr
                                             key={card.cardId}
                                             className="border-b border-primary/5 last:border-0 hover:bg-primary/[0.03] transition-colors cursor-pointer"
                                             onClick={() => {
                                                 const deck = decks.find(
-                                                    (deck) =>
-                                                        deck.deckId ===
-                                                        card.deckId,
+                                                    (d) =>
+                                                        d.deckId === card.deckId,
                                                 );
                                                 if (deck) openTab(deck);
                                             }}>
                                             <td className="px-5 py-3 font-ui text-sm text-primary/70 max-w-[280px] truncate">
                                                 {card.question.replace(
-                                                    // remove LaTeX for table display, ew
                                                     /\$+[^$]+\$+/g,
                                                     "…",
                                                 )}
@@ -85,7 +93,7 @@ const Search = () => {
                                                 {card.deckName}
                                             </td>
                                             <td className="px-5 py-3 font-ui text-sm text-primary/50">
-                                                {card.dueDate.toLocaleDateString()}
+                                                {new Date(card.dueDate).toLocaleDateString()}
                                             </td>
                                             <td className="px-5 py-3 font-ui text-sm text-primary/50">
                                                 {card.laters}
