@@ -58,3 +58,14 @@ UPDATE decks SET filepath = :filepath WHERE deckId = :deckId
 # deck.updateDeckName: deck, name 
 
 UPDATE decks SET name = :name WHERE deckId = :deckId 
+
+** NOTE FOR MINH: you may need to merge from travis' search branch before this
+# search.searchDecks: keyword
+
+** NOTE FOR MINH: your code in all of the following should have something like :keyword = '%' + keyword + '%'.
+**                this '%' is a wildcard character that will allow us to do fuzzy searching 
+SELECT * FROM decks WHERE name LIKE :keyword
+
+# search.searchCards: keyword
+
+SELECT * FROM cards WHERE question LIKE :keyword OR answer LIKE :keyword
