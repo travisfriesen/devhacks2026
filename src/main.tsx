@@ -1,8 +1,8 @@
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-import {AppDB} from "./data/database";
-
+import { AppDB } from "./data/database";
+import { card } from "./types/types";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -10,15 +10,15 @@ if (started) {
 }
 
 const createWindow = () => {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true
-    },
-  });
+    // Create the browser window.
+    const mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            nodeIntegration: true,
+        },
+    });
 
     // and load the index.html of the app.
     if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
@@ -59,5 +59,12 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
-let db: AppDB;
-db = AppDB.getInstance();
+
+async function databaseTest() {
+    const db = await AppDB.getInstance();
+    db.retrieveAllCards().then((cards) => {
+        console.log(cards);
+    });
+}
+
+databaseTest().then();
