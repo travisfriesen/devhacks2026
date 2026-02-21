@@ -11,9 +11,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
             callback(view),
         );
     },
-    onOpenFileDialog: (callback: () => void) => {
-        ipcRenderer.on("open-file-dialog", () => callback());
-    },
+
+    openFile: () => ipcRenderer.invoke("dialog:openFile"),
+
     removeAllListeners: (channel: string) => {
         ipcRenderer.removeAllListeners(channel);
     },

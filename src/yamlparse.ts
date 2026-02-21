@@ -8,7 +8,7 @@ export function parseYaml(yamlPath: string) : IDeck{
     
     let cardLists: Array<ICard> = [];
 
-    let randomUUID: string = crypto.randomUUID(); 
+    const cardLists: Array<ICard> = [];
 
     for (var i = 0; i < myData['cards'].length; i++) {
         let curr = myData['cards'][i];
@@ -33,9 +33,9 @@ export function parseYaml(yamlPath: string) : IDeck{
         uses: myData['uses'],
         streak: myData['streak'],
         cards: cardLists,
-    } 
+    };
 
-    return newDeck
+    return newDeck;
 }
 
 export function dumpDeck(deckInfo:IDeck, path:string) {

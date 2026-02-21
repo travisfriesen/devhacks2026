@@ -1,12 +1,20 @@
-import { app, Menu, BrowserWindow } from "electron";
+import { app, Menu, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-import {createCard, retrieveCard} from "./data/cards";
-import { ICard } from "./types/types";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
     app.quit();
+}
+
+async function handleFileOpen() {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        properties: ["openFile"],
+        filters: [{name: "YAML", extensions: ["yaml"]}],
+    });
+    if (!canceled) {
+        return filePaths[0];
+    }
 }
 
 const createWindow = () => {
@@ -86,6 +94,14 @@ const createWindow = () => {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
 };
+
+app.whenReady().then(() => {
+    ipcMain.handle("dialog:openFile", handleFileOpen);
+    createWindow();
+    app.on("activate", function () {
+        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

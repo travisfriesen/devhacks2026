@@ -11,9 +11,6 @@ let db: Database | undefined;
  * @param keyword
  */
 function searchByKeyword(keyword: string): [decks: IDeck[], cards: ICard[]] {
-    if (db === undefined) {
-        db = getDatabase();
-    }
     return [searchDecks(keyword), searchCards(keyword)];
 }
 
