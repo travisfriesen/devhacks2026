@@ -44,10 +44,17 @@ SELECT * FROM decks
 
 # deck.createDeck: deckId, deck
 
-INSERT INTO decks (deckId, filepath) VALUES (:deckId, :filepath)
+INSERT INTO decks (deckId, name, filepath) VALUES (:deckId, :name, :filepath)
 
 # deck.deleteDeck: deckId
 
 DELETE FROM cards WHERE deckId = :deckId;
 DELETE FROM decks WHERE deckId = :deckId 
+
+# deck.updateDeckFilepath: deck, filepath 
+
+UPDATE decks SET filepath = :filepath WHERE deckId = :deckId 
  
+# deck.updateDeckName: deck, name 
+
+UPDATE decks SET name = :name WHERE deckId = :deckId 

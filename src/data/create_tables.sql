@@ -3,6 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS decks (
     deckId TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
     filepath TEXT NOT NULL,
     lastUpdated TEXT NOT NULL DEFAULT CURRENT_DATE,
     lastUtilizted TEXT NOT NULL DEFAULT CURRENT_DATE,
