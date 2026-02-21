@@ -3,6 +3,7 @@ import { persist, StorageValue } from "zustand/middleware";
 import { ICard, IDeck } from "@/types/types";
 import { RecallRating, scheduleCard } from "@/utils/scheduler";
 import { FontSize, applyTheme } from "@/utils/applyTheme";
+import { retrieveDecks } from "@/data/deck";
 
 // Custom storage that revives ISO date strings back into Date objects on read.
 const isoDateRe = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/; // holy chatgpt generated this
@@ -40,6 +41,8 @@ export interface ITab {
 }
 
 interface AppState {
+    loadDecksFromDB: () => void;
+
     navView: NavView;
     setNavView: (view: NavView) => void;
 
@@ -90,6 +93,15 @@ interface AppState {
 export const useAppStore = create<AppState>()(
     persist(
         (set, get) => ({
+            loadDecksFromDB: () => {
+                window.electronAPI
+                    .getDecks()
+                    .then((decks) => set({ decks }))
+                    .catch((err) =>
+                        console.error("Failed to load decks from DB", err),
+                    );
+            },
+
             navView: "decks",
             setNavView: (view) => set({ navView: view, activeTabId: null }),
 
@@ -411,7 +423,6 @@ export const useAppStore = create<AppState>()(
                 pinnedDeckIds: state.pinnedDeckIds,
                 dailyGoal: state.dailyGoal,
                 reviewHistory: state.reviewHistory,
-                decks: state.decks,
                 tabs: state.tabs,
                 activeTabId: state.activeTabId,
                 themePreset: state.themePreset,
