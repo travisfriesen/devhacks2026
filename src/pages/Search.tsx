@@ -1,9 +1,10 @@
+import {TrendingUp, Calendar, Flame, X} from "lucide-react";
 import React, { useState } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 
 const Search = () => {
-    const { decks, openTab } = useAppStore();
+    const { decks, openTab, setNavView } = useAppStore();
     const [query, setQuery] = useState("");
 
     const allCards = decks.flatMap((deck) =>

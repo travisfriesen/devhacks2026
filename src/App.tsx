@@ -35,6 +35,7 @@ const App = () => {
 
     const renderMain = () => {
         if (navView === "editor") return <EditorPage />;
+        if (activeTabId === null && navView === "decks") return <Dashboard />;
         if (activeTabId) return <Deck />;
         if (navView === "decks") return <Dashboard />;
         if (navView === "search") return <Search />;
