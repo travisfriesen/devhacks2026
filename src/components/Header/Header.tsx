@@ -3,9 +3,7 @@ import { PanelLeftClose, PanelLeft } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 
 const Header = () => {
-    return (
-    <header></header>
-    );
+    return <header></header>;
 };
 
 export default Header;

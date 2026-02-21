@@ -1,4 +1,4 @@
-import { card, deck } from "../types/types";
+import { ICard, IDeck } from "@/types/types";
 
 /**
  * Searches by keyword and returns all decks that contain the keyword,
@@ -6,7 +6,7 @@ import { card, deck } from "../types/types";
  * Returns empty arrays if nothing is found.
  * @param keyword
  */
-function searchByKeyword(keyword: string): [decks: deck[], cards: card[]] {
+function searchByKeyword(keyword: string): [decks: IDeck[], cards: ICard[]] {
     return [searchDecks(keyword), searchCards(keyword)];
 }
 
@@ -15,7 +15,7 @@ function searchByKeyword(keyword: string): [decks: deck[], cards: card[]] {
  * Returns an empty array if nothing is found.
  * @param keyword
  */
-function searchDecks(keyword: string): deck[] {
+function searchDecks(keyword: string): IDeck[] {
     return null;
 }
 
@@ -24,6 +24,6 @@ function searchDecks(keyword: string): deck[] {
  * Returns an empty array if nothing is found.
  * @param keyword
  */
-function searchCards(keyword: string): card[] {
+function searchCards(keyword: string): ICard[] {
     return null;
 }

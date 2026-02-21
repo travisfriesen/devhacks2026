@@ -7,7 +7,7 @@ export interface IDeck {
     lastUtilized: Date;
     uses: number;
     streak: number;
-    cards: Array<card>
+    cards: Array<ICard>;
 }
 
 export interface ICard {
