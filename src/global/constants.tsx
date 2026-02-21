@@ -1,30 +1,126 @@
 import React from "react";
+import { BarChart3, Settings } from "lucide-react";
+import { IDeck } from "@/types/types";
 import { NavView } from "@/store/useAppStore";
-import { Library, BarChart3, Settings } from "lucide-react";
 
-interface INavItem {
-    view: NavView;
-    label: string;
-    icon: React.ReactNode;
-}
-
-const NAV_ITEMS: INavItem[] = [
+const MOCK_DECKS: IDeck[] = [
     {
-        view: "decks",
-        label: "Decks",
-        icon: <Library className="w-3.5 h-3.5" />,
+        deckId: "1",
+        deckName: "Calculus",
+        filepath: "",
+        lastUpdated: new Date(),
+        created: new Date(),
+        uses: 10,
+        streak: 5,
+        lastUtilized: new Date(),
+        cards: [
+            {
+                deckId: "1",
+                cardId: "1-1",
+                question: String.raw`What is the derivative of $f(x) = x^2$?`,
+                answer: String.raw`$f'(x) = 2x$`,
+                laters: 0,
+                dueDate: new Date(),
+            },
+            {
+                deckId: "1",
+                cardId: "1-2",
+                question: String.raw`State the Fundamental Theorem of Calculus.`,
+                answer: String.raw`If $F$ is an antiderivative of $f$ on $[a,b]$, then $$\int_a^b f(x)\,dx = F(b) - F(a)$$`,
+                laters: 0,
+                dueDate: new Date(),
+            },
+            {
+                deckId: "1",
+                cardId: "1-3",
+                question: String.raw`What is $\lim_{x \to 0} \frac{\sin x}{x}$?`,
+                answer: String.raw`$1$`,
+                laters: 0,
+                dueDate: new Date(),
+            },
+            {
+                deckId: "1",
+                cardId: "1-4",
+                question: String.raw`Differentiate $f(x) = e^{x^2}$`,
+                answer: String.raw`$f'(x) = 2x e^{x^2}$`,
+                laters: 0,
+                dueDate: new Date(),
+            },
+        ],
     },
     {
-        view: "stats",
-        label: "Stats",
-        icon: <BarChart3 className="w-3.5 h-3.5" />,
+        deckId: "2",
+        deckName: "Linear Algebra",
+        filepath: "",
+        lastUpdated: new Date(),
+        created: new Date(),
+        uses: 20,
+        streak: 10,
+        lastUtilized: new Date(),
+        cards: [
+            {
+                deckId: "2",
+                cardId: "2-1",
+                question: String.raw`What is the determinant of a $2 \times 2$ matrix $\begin{pmatrix} a & b \\ c & d \end{pmatrix}$?`,
+                answer: String.raw`$ad - bc$`,
+                laters: 0,
+                dueDate: new Date(),
+            },
+            {
+                deckId: "2",
+                cardId: "2-2",
+                question: String.raw`When is a matrix invertible?`,
+                answer: String.raw`When its determinant is non-zero, i.e. $\det(A) \neq 0$`,
+                laters: 0,
+                dueDate: new Date(),
+            },
+            {
+                deckId: "2",
+                cardId: "2-3",
+                question: String.raw`What does it mean for vectors $\mathbf{v}_1, \ldots, \mathbf{v}_n$ to be linearly independent?`,
+                answer: String.raw`The only solution to $c_1\mathbf{v}_1 + \cdots + c_n\mathbf{v}_n = \mathbf{0}$ is $c_1 = \cdots = c_n = 0$`,
+                laters: 0,
+                dueDate: new Date(),
+            },
+        ],
     },
     {
-        view: "settings",
-        label: "Settings",
-        icon: <Settings className="w-3.5 h-3.5" />,
+        deckId: "3",
+        deckName: "History",
+        filepath: "",
+        lastUpdated: new Date(),
+        created: new Date(),
+        uses: 4,
+        streak: 2,
+        lastUtilized: new Date(),
+        cards: [
+            {
+                deckId: "3",
+                cardId: "3-1",
+                question: "In what year did World War II end?",
+                answer: "1945",
+                laters: 0,
+                dueDate: new Date(),
+            },
+            {
+                deckId: "3",
+                cardId: "3-2",
+                question: "Who wrote the Communist Manifesto?",
+                answer: "Karl Marx and Friedrich Engels, published in 1848.",
+                laters: 0,
+                dueDate: new Date(),
+            },
+        ],
     },
 ];
 
-export { NAV_ITEMS };
-export type { INavItem };
+const BOTTOM_NAV: { view: NavView; icon: React.ReactNode; label: string }[] = [
+    { view: "stats", icon: <BarChart3 className="w-4 h-4" />, label: "Stats" },
+    {
+        view: "settings",
+        icon: <Settings className="w-4 h-4" />,
+        label: "Settings",
+    },
+];
+
+export { MOCK_DECKS, BOTTOM_NAV };

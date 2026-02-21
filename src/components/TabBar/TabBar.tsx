@@ -1,5 +1,5 @@
 import React from "react";
-import { X } from "lucide-react";
+import { X, BookOpen } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 
 const TabBar = () => {
@@ -8,45 +8,39 @@ const TabBar = () => {
     if (tabs.length === 0) return null;
 
     return (
-        <div className="flex items-end border-b border-secondary/30 bg-primary overflow-x-auto shrink-0">
+        <div className="flex items-stretch border-b border-secondary/30 bg-primary overflow-x-auto shrink-0 min-h-[36px]">
             {tabs.map((tab) => {
                 const isActive = tab.tabId === activeTabId;
                 return (
-                    <div
+                    <button
                         key={tab.tabId}
                         onClick={() => setActiveTab(tab.tabId)}
-                        className="flex items-center gap-2 px-4 py-2 cursor-pointer border-r border-secondary/20 shrink-0 group transition-colors select-none"
-                        style={{
-                            backgroundColor: isActive
-                                ? "var(--color-background)"
-                                : "transparent",
-                            borderBottom: isActive
-                                ? "2px solid var(--color-secondary)"
-                                : "2px solid transparent",
-                        }}>
-                        <span
-                            className="text-sm font-ui truncate max-w-[140px]"
-                            style={{
-                                color: isActive
-                                    ? "var(--color-primary)"
-                                    : "rgba(255,253,247,0.5)",
-                            }}>
+                        className={[
+                            "flex items-center gap-2 pl-3 pr-2 shrink-0 group transition-colors select-none border-r border-secondary/20 outline-none",
+                            "border-b-2",
+                            isActive
+                                ? "bg-background border-b-secondary text-primary"
+                                : "bg-transparent border-b-transparent text-paper/40 hover:text-paper/70 hover:bg-white/5",
+                        ].join(" ")}>
+                        <span className="text-xs font-ui truncate max-w-[120px]">
                             {tab.deck.deckName}
                         </span>
-                        <button
+
+                        <span
                             onClick={(e) => {
                                 e.stopPropagation();
                                 closeTab(tab.tabId);
                             }}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-secondary/20"
-                            style={{
-                                color: isActive
-                                    ? "var(--color-primary)"
-                                    : "var(--color-paper)",
-                            }}>
+                            className={[
+                                "p-0.5 rounded transition-all",
+                                "hover:bg-secondary/20",
+                                isActive
+                                    ? "opacity-100"
+                                    : "opacity-0 group-hover:opacity-100",
+                            ].join(" ")}>
                             <X className="w-3 h-3" />
-                        </button>
-                    </div>
+                        </span>
+                    </button>
                 );
             })}
         </div>

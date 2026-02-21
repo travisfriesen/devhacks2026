@@ -27,6 +27,7 @@
  */
 
 import "./theme/index.css";
+import "katex/dist/katex.min.css";
 import App from "./App";
 import { createRoot } from "react-dom/client";
 import { useAppStore } from "./store/useAppStore";
