@@ -3,7 +3,6 @@ import { persist, StorageValue } from "zustand/middleware";
 import { ICard, IDeck } from "@/types/types";
 import { RecallRating, scheduleCard } from "@/utils/scheduler";
 import { FontSize, applyTheme } from "@/utils/applyTheme";
-import { retrieveDecks } from "@/data/deck";
 
 // Custom storage that revives ISO date strings back into Date objects on read.
 const isoDateRe = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/; // holy chatgpt generated this
@@ -143,17 +142,7 @@ export const useAppStore = create<AppState>()(
                     //if editor preference is web editor
                     set({ navView: "editor", editingDeckId: deckId });
                 } else {
-                    //open system default editor with the deck's file path
-                    shell.openPath(deckFilepath).then((error: string) => {
-                        if (error === "") {
-                            console.log("Deck opened in system editor");
-                        } else {
-                            console.error(
-                                "Failed to open deck in system editor:",
-                                error,
-                            );
-                        }
-                    });
+                    window.electronAPI.openEditor(deckFilepath);
                 }
             },
 
