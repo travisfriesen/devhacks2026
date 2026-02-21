@@ -6,16 +6,19 @@ export class AppDB {
     private static instance: AppDB;
     private db: Database;
 
-    private constructor() {
-        (async () => {
-            // open the database
-            this.db = await open({
+    private constructor(db: Database) {
+        this.db = db;
+    }
+
+    public static async getInstance(): Promise<AppDB> {
+        if (!AppDB.instance) {
+            const db = await open({
                 filename: "src/data/cards.db",
                 driver: sqlite3.Database,
             });
 
-            // create decks table
-            await this.db.exec(`
+            // create tables
+            await db.exec(`
                 CREATE TABLE IF NOT EXISTS decks
                 (
                     deckId      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,8 +29,7 @@ export class AppDB {
                 );
             `);
 
-            // create cards table
-            await this.db.exec(`
+            await db.exec(`
                 CREATE TABLE IF NOT EXISTS cards
                 (
                     cardId   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,21 +37,17 @@ export class AppDB {
                     question TEXT              NOT NULL,
                     answer   TEXT              NOT NULL,
                     laters   INTEGER DEFAULT 0 NOT NULL,
-
                     UNIQUE (cardId, deckId)
                 );
             `);
-        })();
-    }
 
-    public static getInstance(): AppDB {
-        if (!AppDB.instance) {
-            AppDB.instance = new AppDB();
+            AppDB.instance = new AppDB(db);
         }
+
         return AppDB.instance;
     }
 
-    public async getCardByCardId(
+    public async retrieveCardByCardId(
         cardId: string,
         deckId: string,
     ): Promise<card> {
@@ -64,7 +62,7 @@ export class AppDB {
         return result;
     }
 
-    public async getCardsByDeckId(deckId: string): Promise<card[]> {
+    public async retrieveCardsByDeckId(deckId: string): Promise<card[]> {
         let result: card[];
         result = await this.db.get(
             "SELECT * FROM cards WHERE deckId = :deckId",
@@ -73,5 +71,28 @@ export class AppDB {
             },
         );
         return result;
+    }
+
+    public async retrieveAllCards(): Promise<card[]> {
+        let result: card[];
+        result = await this.db.get("SELECT * FROM cards");
+        return result;
+    }
+
+    public async createCard(card: card, deckId: string): Promise<boolean> {
+        try {
+            await this.db.run(
+                "INSERT INTO cards (cardId, deckId, question, answer) VALUES (:cardId, :deckId, :question, :answer)",
+                {
+                    ":cardId": card.cardId,
+                    ":deckId": deckId,
+                    ":question": card.question,
+                    ":answer": card.answer,
+                },
+            );
+        } catch (error) {
+            console.error("Error creating card:", error);
+            return false;
+        }
     }
 }

@@ -6,7 +6,7 @@ export interface deck {
     created: Date;
     uses: number;
     streak: number;
-    cards: Array<card>
+    cards: Array<card>;
 }
 
 export interface card {
