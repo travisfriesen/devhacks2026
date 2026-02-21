@@ -58,5 +58,4 @@ spec/fixtures/logo.png
 .yarn/install-state.gz
 
 # database file
-/src/database/cards.db
 /src/data/cards.db

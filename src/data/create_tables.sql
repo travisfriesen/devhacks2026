@@ -3,6 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS decks (
     deckId TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
     filepath TEXT NOT NULL,
     lastUpdated TEXT NOT NULL DEFAULT CURRENT_DATE,
     lastUtilizted TEXT NOT NULL DEFAULT CURRENT_DATE,
@@ -19,6 +20,7 @@ CREATE TABLE IF NOT EXISTS cards (
     question TEXT NOT NULL,
     answer TEXT NOT NULL,
     laters INTEGER DEFAULT 0 NOT NULL,
+    dueDate TEXT NOT NULL DEFAULT CURRENT_DATE,
     
     PRIMARY KEY (cardId, deckId) 
 );
