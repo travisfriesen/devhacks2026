@@ -91,8 +91,8 @@ const Deck = () => {
             </div>
 
             <p className="flex items-center font-ui text-xs text-primary/25">
-                Space to flip. <ArrowLeft className='w-5 h-5' /> <ArrowRight className='w-5 h-5' /> to
-                navigate.
+                Space to flip. <ArrowLeft className="w-5 h-5" />{" "}
+                <ArrowRight className="w-5 h-5" /> to navigate.
             </p>
         </div>
     );

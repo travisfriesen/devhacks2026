@@ -1,4 +1,4 @@
-import { ICard } from "../types/types";
+import { ICard } from "@/types/types";
 
 /**
  * Retrieves a card from the database.
@@ -6,7 +6,7 @@ import { ICard } from "../types/types";
  * @param cardId
  * @param deckId
  */
-export function retrieveCard(cardId: string, deckId: string): card {
+export function retrieveCard(cardId: string, deckId: string): ICard {
     return null;
 }
 
@@ -15,7 +15,7 @@ export function retrieveCard(cardId: string, deckId: string): card {
  * Returns null if the deck does not exist.
  * @param deckId
  */
-export function retrieveCards(deckId: string): card[] {
+export function retrieveCards(deckId: string): ICard[] {
     return null;
 }
 
@@ -23,7 +23,7 @@ export function retrieveCards(deckId: string): card[] {
  * Retrieves all the cards from the database.
  * Returns null if the deck does not exist.
  */
-export function retrieveAllCards(): card[] {
+export function retrieveAllCards(): ICard[] {
     return null;
 }
 
@@ -33,7 +33,7 @@ export function retrieveAllCards(): card[] {
  * @param card
  * @param deckId
  */
-export function createCard(card: card, deckId: string): boolean {
+export function createCard(card: ICard, deckId: string): boolean {
     return false;
 }
 
@@ -44,7 +44,7 @@ export function createCard(card: card, deckId: string): boolean {
  * @param cards
  * @param deckId
  */
-export function createCards(cards: card[], deckId: string): boolean {
+export function createCards(cards: ICard[], deckId: string): boolean {
     return false;
 }
 
@@ -72,7 +72,7 @@ export function deleteAllCards(deckId: string): boolean {
  * @param card
  * @param question
  */
-export function updateCardQuestion(card: card, question: string): boolean {
+export function updateCardQuestion(card: ICard, question: string): boolean {
     return false;
 }
 
@@ -81,7 +81,7 @@ export function updateCardQuestion(card: card, question: string): boolean {
  * @param card
  * @param answer
  */
-export function updateCardAnswer(card: card, answer: string): boolean {
+export function updateCardAnswer(card: ICard, answer: string): boolean {
     return false;
 }
 
@@ -90,7 +90,7 @@ export function updateCardAnswer(card: card, answer: string): boolean {
  * @param card
  * @param later
  */
-export function updateCardLaters(card: card, later: number): boolean {
+export function updateCardLaters(card: ICard, later: number): boolean {
     return false;
 }
 
@@ -99,6 +99,6 @@ export function updateCardLaters(card: card, later: number): boolean {
  * @param card
  * @param dueDate
  */
-export function updateCardDueDate(card: card, dueDate: Date): boolean {
+export function updateCardDueDate(card: ICard, dueDate: Date): boolean {
     return false;
 }
