@@ -20,6 +20,8 @@ import {
     retrieveCard,
     retrieveCards,
     retrieveAllCards,
+    retrieveCardsDueToday,
+    retrieveDueCardsByDeckId,
     createCard,
     createCards,
     deleteCard,
@@ -158,6 +160,23 @@ app.whenReady().then(() => {
         }
         return cards;
     });
+    ipcMain.handle("db:retrieveCardsDueToday", async () => {
+        const cards = retrieveCardsDueToday();
+        if (!cards) {
+            throw new Error("No cards found");
+        }
+        return cards;
+    });
+    ipcMain.handle(
+        "db:retrieveDueCardsByDeckId",
+        async (_event, deckId: string) => {
+            const cards = retrieveDueCardsByDeckId(deckId);
+            if (!cards) {
+                throw new Error("No cards found");
+            }
+            return cards;
+        },
+    );
     ipcMain.handle("db:deleteAllCards", async (_event, deckId: string) => {
         return deleteAllCards(deckId);
     });

@@ -30,6 +30,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
     retrieveCard: (cardId: string, deckId: string) =>
         ipcRenderer.invoke("db:retrieveCard", cardId, deckId),
     retrieveAllCards: () => ipcRenderer.invoke("db:retrieveAllCards"),
+    retrieveCardsDueToday: () => ipcRenderer.invoke("db:retrieveCardsDueToday"),
+    retrieveDueCardsByDeckId: (deckId: string) =>
+        ipcRenderer.invoke("db:retrieveDueCardsByDeckId", deckId),
     deleteAllCards: (deckId: string) =>
         ipcRenderer.invoke("db:deleteAllCards", deckId),
     getDeck: (deckId: string) => ipcRenderer.invoke("db:getDeck", deckId),

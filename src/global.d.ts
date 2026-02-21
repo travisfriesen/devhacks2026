@@ -27,6 +27,8 @@ declare global {
 
             retrieveCard: (cardId: string, deckId: string) => Promise<ICard>;
             retrieveAllCards: () => Promise<ICard[]>;
+            retrieveCardsDueToday: () => Promise<ICard[]>;
+            retrieveDueCardsByDeckId: (deckId: string) => Promise<ICard[]>;
             createCard: (card: ICard, deckId: string) => Promise<boolean>;
             createCards: (cards: ICard[], deckId: string) => Promise<boolean>;
             deleteCard: (cardId: string, deckId: string) => Promise<boolean>;

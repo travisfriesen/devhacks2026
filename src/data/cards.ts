@@ -216,3 +216,26 @@ export function updateCardDueDate(card: ICard, dueDate: Date): boolean {
     const dueDateStr = dueDate instanceof Date ? dueDate.toISOString().slice(0, 10) : String(dueDate);
     return statement.run(dueDateStr, card.cardId, card.deckId).changes > 0;
 }
+
+export function retrieveCardsDueToday(): ICard[] {
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `SELECT * FROM cards WHERE dueDate = date('now')`,
+    );
+    const output = statement.all();
+    return fixCardTypeArray(output);
+}
+
+export function retrieveDueCardsByDeckId(deckId: string): ICard[] {
+    if (db === undefined) {
+        db = getDatabase();
+    }
+    const statement = db.prepare(
+        `SELECT * FROM cards WHERE dueDate <= date('now') AND deckId = ?`,
+    );
+    const output = statement.all(deckId);
+    return fixCardTypeArray(output);
+}
