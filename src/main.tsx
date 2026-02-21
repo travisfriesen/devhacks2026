@@ -1,7 +1,8 @@
 import { app, Menu, BrowserWindow } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-
+import {createCard, retrieveCard} from "./data/cards";
+import { ICard } from "./types/types";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -110,3 +111,5 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+console.log(retrieveCard("123", "deck123"));
+console.log(retrieveCard("124", "deck123"));

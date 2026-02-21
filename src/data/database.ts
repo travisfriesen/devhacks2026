@@ -1,6 +1,6 @@
 import sqlite3 from "sqlite3";
 import { Database, open } from "sqlite";
-import { card, deck } from "../types/types";
+import { ICard, IDeck } from "../types/types";
 
 export class AppDB {
     private static instance: AppDB;
@@ -54,7 +54,7 @@ export class AppDB {
     public async retrieveCardByCardId(
         cardId: string,
         deckId: string,
-    ): Promise<card> {
+    ): Promise<ICard> {
         return await this.db.get(
             "SELECT * FROM cards WHERE cardId = :cardId AND deckId = :deckId",
             {
@@ -64,17 +64,17 @@ export class AppDB {
         );
     }
 
-    public async retrieveCardsByDeckId(deckId: string): Promise<card[]> {
+    public async retrieveCardsByDeckId(deckId: string): Promise<ICard[]> {
         return await this.db.get("SELECT * FROM cards WHERE deckId = :deckId", {
             ":deckId": deckId,
         });
     }
 
-    public async retrieveAllCards(): Promise<card[]> {
+    public async retrieveAllCards(): Promise<ICard[]> {
         return await this.db.get("SELECT * FROM cards");
     }
 
-    public async createCard(card: card, deckId: string): Promise<boolean> {
+    public async createCard(card: ICard, deckId: string): Promise<boolean> {
         try {
             await this.db.run(
                 "INSERT INTO cards (cardId, deckId, question, answer) VALUES (:cardId, :deckId, :question, :answer)",
@@ -107,7 +107,7 @@ export class AppDB {
     }
 
     public async updateCardQuestion(
-        card: card,
+        card: ICard,
         question: string,
     ): Promise<boolean> {
         try {
@@ -126,7 +126,7 @@ export class AppDB {
     }
 
     public async updateCardAnswer(
-        card: card,
+        card: ICard,
         answer: string,
     ): Promise<boolean> {
         try {
@@ -145,7 +145,7 @@ export class AppDB {
     }
 
     public async updateCardLaters(
-        card: card,
+        card: ICard,
         laters: string,
     ): Promise<boolean> {
         try {
@@ -164,7 +164,7 @@ export class AppDB {
     }
 
     public async updateCardDueDate(
-        card: card,
+        card: ICard,
         dueDate: string,
     ): Promise<boolean> {
         try {
@@ -182,17 +182,17 @@ export class AppDB {
         }
     }
 
-    public async retrieveDeckByDeckId(deckId: string): Promise<deck> {
+    public async retrieveDeckByDeckId(deckId: string): Promise<IDeck> {
         return await this.db.get("SELECT * FROM decks WHERE deckId = :deckId", {
             ":deckId": deckId,
         });
     }
 
-    public async retrieveAllDecks(): Promise<deck[]> {
+    public async retrieveAllDecks(): Promise<IDeck[]> {
         return await this.db.get("SELECT * FROM decks");
     }
 
-    public async createDeck(deckId: string, deck: deck): Promise<boolean> {
+    public async createDeck(deckId: string, deck: IDeck): Promise<boolean> {
         try {
             await this.db.run(
                 "INSERT INTO decks (deckId, name, filepath) VALUES (:deckId, :name, :filepath)",
@@ -223,7 +223,7 @@ export class AppDB {
     }
 
     public async updateDeckFilepath(
-        deck: deck,
+        deck: IDeck,
         filepath: string,
     ): Promise<boolean> {
         try {
@@ -240,7 +240,7 @@ export class AppDB {
         }
     }
 
-    public async updateDeckName(deck: deck, name: string): Promise<boolean> {
+    public async updateDeckName(deck: IDeck, name: string): Promise<boolean> {
         try {
             await this.db.run(
                 "UPDATE decks SET name = :name WHERE deckId = :deckId",
@@ -255,7 +255,7 @@ export class AppDB {
         }
     }
 
-    public async searchDecksByName(name: string): Promise<deck[]> {
+    public async searchDecksByName(name: string): Promise<IDeck[]> {
         return await this.db.get(
             "SELECT * FROM decks WHERE name LIKE :keyword",
             {
@@ -264,7 +264,7 @@ export class AppDB {
         );
     }
 
-    public async searchCardsByKeywords(keywords: string): Promise<card[]> {
+    public async searchCardsByKeywords(keywords: string): Promise<ICard[]> {
         return await this.db.get(
             "SELECT * FROM cards WHERE question LIKE :keyword OR answer LIKE :keyword",
             {
