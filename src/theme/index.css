@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@layer base {
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        background-color: var(--color-background);
+        color: var(--color-primary);
+    }
+
+    button, input, label, select, textarea,
+    span:not(.katex *), p:not(.katex *) {
+        font-family: var(--font-ui);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-display);
+    }
+
+    .katex {
+        font-family: var(--font-latex) !important;
+        font-size: var(--text-3xl) !important;
+    }
+}
+
+@theme {
+    --color-primary: #23001e;
+    --color-secondary: #b9314f;
+    --color-tertiary: #c77dff;
+    --color-background: #f5f0ff;
+    --color-outline: #230903;
+    --color-paper: #fffdf7;
+    --font-ui: "Plus Jakarta Sans", sans-serif;
+    --font-latex: "Cormorant", sans-serif;
+}
+
+:root {
+    font-family: "Lexend", serif;
+    font-optical-sizing: auto;
+    font-size: 1rem;
+    font-weight: 500;
+    font-style: normal;
+}
