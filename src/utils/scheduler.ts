@@ -2,7 +2,29 @@ import { ICard } from "@/types/types";
 
 export function fibonacci(n: number): number {
     // Leaving this to Keira. Hopefully it's not a O(2^n) algorithm
-    return n;
+    // -_-
+    
+    let fib1 = 3;
+    let fib2 = 5;
+    let result = 0;
+
+    if (n == 0) {
+        result = fib1;
+    }
+    else if (n == 1) {
+        result = fib2; 
+    }
+    else {
+        while (n >= 2) {
+            n--;
+            let temp = fib2;
+            fib2 = fib1 + fib2;
+            fib1 = temp;
+        }
+        result = fib2;
+    }
+
+    return result;
 }
 
 export type RecallRating = 1 | 2 | 3 | 4; // again | later-session | next-session | later
