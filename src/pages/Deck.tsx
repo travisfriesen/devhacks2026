@@ -67,7 +67,9 @@ const Deck = () => {
                     </span>
                     <div className="flex items-center gap-3">
                         <button
-                            onClick={() => openEditor(tab.deck.deckId)}
+                            onClick={() =>
+                                openEditor(tab.deck.deckId, tab.deck.filepath)
+                            }
                             className="flex items-center gap-1.5 font-ui text-xs text-primary/30 hover:text-primary/60 transition-colors"
                             title="Edit deck">
                             <Pencil className="w-3.5 h-3.5" />

@@ -1,11 +1,21 @@
 import React from "react";
 import { useAppStore } from "@/store/useAppStore";
-import { PRESET_PALETTES, DISPLAY_FONTS, UI_FONTS, FontSize } from "@/utils/applyTheme";
+import {
+    PRESET_PALETTES,
+    DISPLAY_FONTS,
+    UI_FONTS,
+    FontSize,
+} from "@/utils/applyTheme";
 
 const FONT_SIZE_OPTIONS: { label: string; value: FontSize }[] = [
     { label: "Small", value: "sm" },
     { label: "Medium", value: "md" },
     { label: "Large", value: "lg" },
+];
+
+const EDITOR_PREFERENCE = [
+    { label: "System Default Editor", value: "System Default Editor" },
+    { label: "Web Editor", value: "Web Editor" },
 ];
 
 const Settings = () => {
@@ -20,13 +30,17 @@ const Settings = () => {
         setDisplayFont,
         dailyGoal,
         setDailyGoal,
+        editorPreference,
+        setEditorPreference,
     } = useAppStore();
 
     return (
         <div className="p-8 max-w-3xl mx-auto space-y-10">
             {/* Page title */}
             <div>
-                <h1 className="text-2xl font-semibold text-primary">Settings</h1>
+                <h1 className="text-2xl font-semibold text-primary">
+                    Settings
+                </h1>
                 <p className="mt-1 text-sm text-primary/50">
                     Customise the look and feel of the app.
                 </p>
@@ -50,8 +64,9 @@ const Settings = () => {
                                         ? "border-secondary ring-1 ring-secondary"
                                         : "border-outline/30 hover:border-secondary/60",
                                 ].join(" ")}
-                                style={{ backgroundColor: "var(--color-paper)" }}
-                            >
+                                style={{
+                                    backgroundColor: "var(--color-paper)",
+                                }}>
                                 <span className="block text-sm text-primary mb-2 font-medium">
                                     {preset.name}
                                 </span>
@@ -98,8 +113,7 @@ const Settings = () => {
                                     active
                                         ? "bg-secondary text-paper border-secondary"
                                         : "border-outline/30 text-primary hover:border-secondary/60",
-                                ].join(" ")}
-                            >
+                                ].join(" ")}>
                                 {opt.label}
                             </button>
                         );
@@ -128,8 +142,7 @@ const Settings = () => {
                                         ? "bg-secondary text-paper border-secondary"
                                         : "border-outline/30 text-primary hover:border-secondary/60",
                                 ].join(" ")}
-                                style={{ fontFamily: f.value }}
-                            >
+                                style={{ fontFamily: f.value }}>
                                 {f.label}
                             </button>
                         );
@@ -158,8 +171,7 @@ const Settings = () => {
                                         ? "bg-secondary text-paper border-secondary"
                                         : "border-outline/30 text-primary hover:border-secondary/60",
                                 ].join(" ")}
-                                style={{ fontFamily: f.value }}
-                            >
+                                style={{ fontFamily: f.value }}>
                                 {f.label}
                             </button>
                         );
@@ -188,6 +200,34 @@ const Settings = () => {
                         className="w-24 px-3 py-2 border border-outline/30 bg-paper text-primary text-sm focus:outline-none focus:border-secondary"
                     />
                     <span className="text-sm text-primary/50">cards / day</span>
+                </div>
+            </section>
+
+            {/* ── Editor Preference ────────────────────────────────────────── */}
+            <section className="space-y-3">
+                <h2 className="text-xs font-semibold tracking-widest text-primary/40 uppercase">
+                    Editor Preference
+                </h2>
+                <p className="text-xs text-primary/40">
+                    Controls flash card editor.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                    {EDITOR_PREFERENCE.map((f) => {
+                        const active = f.value === editorPreference;
+                        return (
+                            <button
+                                key={f.value}
+                                onClick={() => setEditorPreference(f.value)}
+                                className={[
+                                    "px-5 py-2 border text-sm transition-all",
+                                    active
+                                        ? "bg-secondary text-paper border-secondary"
+                                        : "border-outline/30 text-primary hover:border-secondary/60",
+                                ].join(" ")}>
+                                {f.label}
+                            </button>
+                        );
+                    })}
                 </div>
             </section>
         </div>

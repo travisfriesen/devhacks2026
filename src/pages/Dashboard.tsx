@@ -69,7 +69,12 @@ const Dashboard = () => {
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
-                                    onClick={() => openEditor(lastDeck.deckId)}
+                                    onClick={() =>
+                                        openEditor(
+                                            lastDeck.deckId,
+                                            lastDeck.filepath,
+                                        )
+                                    }
                                     className="flex items-center gap-2 font-ui text-sm px-4 py-2.5 rounded-lg border border-primary/15 text-primary/50 hover:text-primary hover:border-primary/30 transition-all">
                                     <Pencil className="w-4 h-4" />
                                     Edit
@@ -122,7 +127,12 @@ const Dashboard = () => {
                                             />
                                         </button>
                                         <button
-                                            onClick={() => openEditor(deck.deckId)}
+                                            onClick={() =>
+                                                openEditor(
+                                                    deck.deckId,
+                                                    deck.filepath,
+                                                )
+                                            }
                                             title="Edit deck"
                                             className="p-1 rounded text-primary/30 hover:text-primary/70 transition-colors">
                                             <Pencil className="w-3.5 h-3.5" />
