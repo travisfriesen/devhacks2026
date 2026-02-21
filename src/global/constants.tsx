@@ -2,6 +2,7 @@ import React from "react";
 import { BarChart3, Settings } from "lucide-react";
 import { IDeck } from "@/types/types";
 import { NavView } from "@/store/useAppStore";
+import { RecallRating } from "@/utils/scheduler";
 
 const MOCK_DECKS: IDeck[] = [
     {
@@ -123,4 +124,36 @@ const BOTTOM_NAV: { view: NavView; icon: React.ReactNode; label: string }[] = [
     },
 ];
 
-export { MOCK_DECKS, BOTTOM_NAV };
+const RECALL_BUTTONS: {
+    rating: RecallRating;
+    label: string;
+    key: string;
+    color: string;
+}[] = [
+    {
+        rating: 1,
+        label: "Again",
+        key: "1",
+        color: "var(--color-secondary)",
+    },
+    {
+        rating: 2,
+        label: "Later This Session",
+        key: "2",
+        color: "var(--color-tertiary)",
+    },
+    {
+        rating: 3,
+        label: "Next Session",
+        key: "3",
+        color: "var(--color-primary)",
+    },
+    {
+        rating: 4,
+        label: "Later",
+        key: "4",
+        color: "color-mix(in srgb, var(--color-primary) 40%, transparent)",
+    },
+];
+
+export { MOCK_DECKS, BOTTOM_NAV, RECALL_BUTTONS };
