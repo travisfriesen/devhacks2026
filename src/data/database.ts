@@ -1,16 +1,15 @@
 import Database from "better-sqlite3";
-import path from "path";
-import fs from "fs";
 
 /*
  * All database functions are sourced from here
  * https://github.com/WiseLibs/better-sqlite3/blob/HEAD/docs/api.md#class-statement
  */
 
-export function getDatabase() {
-    const dbPath = path.resolve();
-    fs.mkdirSync(dbPath, { recursive: true });
-    const db = new Database(process.cwd() + "/database.db");
+export function getDatabase(dbPath: string) {
+    if (dbPath === undefined) {
+        throw new Error("Database path is not set. Call init() first.");
+    }
+    const db = new Database(dbPath + "/database.db");
     const makeDeck = db.prepare(`CREATE TABLE IF NOT EXISTS decks (
     deckId TEXT PRIMARY KEY,
     name TEXT NOT NULL,
