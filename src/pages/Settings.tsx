@@ -1,6 +1,7 @@
 import React from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { PRESET_PALETTES, DISPLAY_FONTS, UI_FONTS, FontSize } from "@/utils/applyTheme";
+import {X} from "lucide-react";
 
 const FONT_SIZE_OPTIONS: { label: string; value: FontSize }[] = [
     { label: "Small", value: "sm" },
@@ -20,16 +21,31 @@ const Settings = () => {
         setDisplayFont,
         dailyGoal,
         setDailyGoal,
+        setNavView
     } = useAppStore();
 
     return (
         <div className="p-8 max-w-3xl mx-auto space-y-10">
-            {/* Page title */}
-            <div>
-                <h1 className="text-2xl font-semibold text-primary">Settings</h1>
-                <p className="mt-1 text-sm text-primary/50">
-                    Customise the look and feel of the app.
-                </p>
+            <div className="flex items-center justify-between">
+                {/* Page title */}
+                <div>
+                    <h1 className="text-2xl font-semibold text-primary">Settings</h1>
+                    <p className="mt-1 text-sm text-primary/50">
+                        Customise the look and feel of the app.
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <span
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setNavView("decks");
+                        }}
+                    className="p-2 rounded text-primary/40 hover:bg-primary hover:text-paper/70 transition-all cursor-pointer">
+                                <X className="w-4 h-4" />
+                        </span>
+                </div>
+
             </div>
 
             {/* ── Colour Palette ─────────────────────────────────────── */}

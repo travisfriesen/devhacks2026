@@ -1,3 +1,4 @@
+import {TrendingUp, Calendar, Flame, X} from "lucide-react";
 import React, { useState } from "react";
 import {
     Search as SearchIcon,
@@ -21,8 +22,7 @@ type SortDir = "asc" | "desc";
 type EnrichedCard = ICard & { deckName: string };
 
 const Search = () => {
-    const { decks, openTab } = useAppStore();
-
+    const { decks, openTab, setNavView } = useAppStore();
     const [query, setQuery] = useState("");
     const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<SortKey>("dueDate");
