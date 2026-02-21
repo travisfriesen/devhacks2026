@@ -8,6 +8,21 @@
   "engines": {
     "node": "25.6.0"
   },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "executableName": "devhacks2026"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": ["darwin", "linux", "win32"],
+          "config": {
+          }
+        }
+      ]
+    }
+  },
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -21,6 +36,7 @@
     "@babel/preset-react": "^7.28.5",
     "@electron-forge/cli": "^7.11.1",
     "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-dmg": "^7.11.1",
     "@electron-forge/maker-rpm": "^7.11.1",
     "@electron-forge/maker-squirrel": "^7.11.1",
     "@electron-forge/maker-zip": "^7.11.1",
@@ -49,8 +65,8 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.0",
-    "better-sqlite3": "^12.6.2",
     "@uiw/react-md-editor": "^4.0.11",
+    "better-sqlite3": "^12.6.2",
     "electron-squirrel-startup": "^1.0.1",
     "i": "^0.3.7",
     "inspirational-quotes": "^2.0.1",
@@ -59,8 +75,8 @@
     "npm": "^11.10.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-router-dom": "^7.13.0",
     "react-katex": "^3.1.0",
+    "react-router-dom": "^7.13.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "tailwindcss": "^4.2.0",
