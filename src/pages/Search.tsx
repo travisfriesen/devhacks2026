@@ -1,5 +1,5 @@
 import React from "react";
-import { TrendingUp, Calendar, Flame } from "lucide-react";
+import {TrendingUp, Calendar, Flame, X} from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { HEATMAP } from "@/global/constants";
 
@@ -12,7 +12,7 @@ function heatColor(intensity: number): string {
 }
 
 const Search = () => {
-    const { decks, openTab } = useAppStore();
+    const { decks, openTab, setNavView } = useAppStore();
 
     const allCards = decks.flatMap((deck) =>
         deck.cards.map((card) => ({ ...card, deckName: deck.deckName })),
@@ -28,9 +28,21 @@ const Search = () => {
         <div className="flex-1 h-full overflow-y-auto p-8">
             <div className="max-w-4xl mx-auto space-y-10">
                 <section>
-                    <p className="font-ui text-xs uppercase tracking-widest text-primary/35 mb-3">
-                        All Cards
-                    </p>
+                    <div className="flex items-center justify-between pb-2">
+                        <p className="font-ui text-xs uppercase tracking-widest text-primary/35 pl-2">
+                            All Cards
+                        </p>
+                        <div className="flex items-center gap-2">
+                        <span
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setNavView("decks");
+                            }}
+                            className="p-2 rounded text-primary/40 hover:bg-primary hover:text-paper/70 transition-all cursor-pointer">
+                                    <X className="w-4 h-4" />
+                            </span>
+                        </div>
+                    </div>
                     <div
                         className="border border-primary/10 rounded-xl overflow-hidden bg-paper"
                         style={{ boxShadow: "0 2px 12px rgba(35,0,30,0.06)" }}>
