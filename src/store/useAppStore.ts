@@ -1,13 +1,17 @@
 import { create } from "zustand";
-import { IDeck } from "@/types/types";
+import { ICard, IDeck } from "@/types/types";
+import { RecallRating, scheduleCard } from "@/utils/scheduler";
 
 export type NavView = "decks" | "stats" | "settings";
 
 export interface ITab {
     tabId: string;
     deck: IDeck;
-    currentIndex: number;
     flipped: boolean;
+    queue: ICard[];
+    history: ICard[]; // Need to conserve history for going next and prev without shuffling the queue. The implementation I'm going to do is a stack that pops at the end of the list cause it'll be easier
+    completed: number;
+    totalCards: number;
 }
 
 interface AppState {
@@ -26,6 +30,7 @@ interface AppState {
     nextCard: (tabId: string) => void;
     prevCard: (tabId: string) => void;
     flipCard: (tabId: string) => void;
+    answerCard: (tabId: string, rating: RecallRating) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -51,10 +56,14 @@ export const useAppStore = create<AppState>((set, get) => ({
         }
 
         const tabId = `tab-${deck.deckId}-${Date.now()}`;
+        const queue = [...deck.cards];
         const newTab: ITab = {
             tabId,
             deck,
-            currentIndex: 0,
+            queue,
+            history: [],
+            totalCards: queue.length,
+            completed: 0,
             flipped: false,
         };
 
@@ -87,33 +96,61 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     nextCard: (tabId) => {
         set((state) => ({
-            tabs: state.tabs.map((tab) =>
-                tab.tabId === tabId
-                    ? {
-                          ...tab,
-                          currentIndex:
-                              (tab.currentIndex + 1) % tab.deck.cards.length,
-                          flipped: false,
-                      }
-                    : tab,
-            ),
+            tabs: state.tabs.map((tab) => {
+                if (tab.tabId !== tabId || tab.queue.length === 0) return tab;
+
+                const [current, ...rest] = tab.queue;
+                return {
+                    ...tab,
+                    queue: rest, // Remove from the front; prevCard restores from history
+                    completed: tab.completed + 1,
+                    history: [...tab.history, current],
+                    flipped: false,
+                };
+            }),
         }));
     },
     prevCard: (tabId) => {
         set((state) => ({
-            tabs: state.tabs.map((tab) =>
-                tab.tabId === tabId
-                    ? {
-                          ...tab,
-                          currentIndex:
-                              (tab.currentIndex - 1 + tab.deck.cards.length) %
-                              tab.deck.cards.length,
-                          flipped: false,
-                      }
-                    : tab,
-            ),
+            tabs: state.tabs.map((tab) => {
+                if (tab.tabId !== tabId || tab.history.length === 0) return tab;
+
+                const prev = tab.history[tab.history.length - 1];
+                return {
+                    ...tab,
+                    queue: [prev, ...tab.queue],
+                    history: tab.history.slice(0, -1),
+                    completed: tab.completed - 1,
+                    flipped: false,
+                };
+            }),
         }));
     },
+
+    answerCard: (tabId, rating) =>
+        set((state) => ({
+            tabs: state.tabs.map((tab) => {
+                if (tab.tabId !== tabId || tab.queue.length === 0) return tab;
+                const { queue, updatedCard } = scheduleCard(
+                    tab.queue[0],
+                    rating,
+                    tab.queue,
+                );
+                const updatedDeckCards = tab.deck.cards.map((c) =>
+                    c.cardId === updatedCard.cardId ? updatedCard : c,
+                );
+                const isPermanentlyScheduled = rating === 3 || rating === 4;
+                return {
+                    ...tab,
+                    queue,
+                    flipped: false,
+                    completed: isPermanentlyScheduled
+                        ? tab.completed + 1
+                        : tab.completed,
+                    deck: { ...tab.deck, cards: updatedDeckCards },
+                };
+            }),
+        })),
 
     flipCard: (tabId) => {
         set((state) => ({
