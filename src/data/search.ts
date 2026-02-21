@@ -25,7 +25,7 @@ export function searchDecks(keyword: string): IDeck[] {
     }
 
     const statement = db.prepare(
-        `SELECT * FROM decks WHERE name LIKE '%' + ? '%'`,
+        `SELECT * FROM decks WHERE name LIKE '%' || ? || '%'`,
     );
 
     return statement.all(keyword);
@@ -42,8 +42,8 @@ export function searchCards(keyword: string): ICard[] {
     }
 
     const statement = db.prepare(
-        `SELECT * FROM cards WHERE question LIKE '%' + ?  + '%' OR answer LIKE '%' + ? + '%'`,
+        `SELECT * FROM cards WHERE question LIKE '%' || ? || '%' OR answer LIKE '%' || ? || '%'`,
     );
 
-    return statement.all(keyword);
+    return statement.all(keyword, keyword);
 }

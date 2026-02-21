@@ -1,19 +1,33 @@
 import React from "react";
-import { TrendingUp, Calendar, Flame, PlayCircle, Star, Pencil } from "lucide-react";
+import {
+    TrendingUp,
+    Calendar,
+    Flame,
+    PlayCircle,
+    Star,
+    Pencil,
+    Plus,
+    FolderOpen,
+} from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { HEATMAP } from "@/global/constants";
 import InspirationalQuotes from "@/components/InspirationalQuotes/InspirationalQuotes";
 
-function heatColor(intensity: number): string {
-    if (intensity === 0) return "bg-transparent";
-    if (intensity <= 0.25) return "bg-primary/25";
-    if (intensity <= 0.5) return "bg-primary/50";
-    if (intensity <= 0.75) return "bg-primary/75";
-    return "bg-primary";
-}
+import { heatColor } from "@/utils/misc";
 
 const Dashboard = () => {
-    const { decks, openTab, pinnedDeckIds, togglePinDeck, openEditor } = useAppStore();
+    const {
+        decks,
+        openTab,
+        pinnedDeckIds,
+        togglePinDeck,
+        openEditor,
+        reviewHistory,
+        createDeck,
+    } = useAppStore();
+
+    const handleOpenFile = async () => {
+        await window.electronAPI.openFile();
+    };
 
     const allCards = decks.flatMap((deck) =>
         deck.cards.map((card) => ({ ...card, deckName: deck.deckName })),
@@ -27,15 +41,47 @@ const Dashboard = () => {
     const lastDeck =
         decks.length > 0
             ? [...decks].sort(
-                (a, b) =>
-                    new Date(b.lastUtilized).getTime() -
-                    new Date(a.lastUtilized).getTime(),
-            )[0]
+                  (a, b) =>
+                      new Date(b.lastUtilized).getTime() -
+                      new Date(a.lastUtilized).getTime(),
+              )[0]
             : null;
 
     const totalCards = allCards.length;
-
     const pinnedDecks = decks.filter((d) => pinnedDeckIds.includes(d.deckId));
+
+    // Heatmap derived from reviewHistory (last 26 weeks)
+    const maxReviews = Math.max(...Object.values(reviewHistory), 1);
+    const heatmapStart = new Date();
+    heatmapStart.setDate(heatmapStart.getDate() - (26 * 7 - 1));
+    const heatmap = Array.from({ length: 26 }, (_, weekIdx) =>
+        Array.from({ length: 7 }, (_, dayIdx) => {
+            const d = new Date(heatmapStart);
+            d.setDate(d.getDate() + weekIdx * 7 + dayIdx);
+            const key = d.toISOString().slice(0, 10);
+            return Math.min((reviewHistory[key] ?? 0) / maxReviews, 1);
+        }),
+    );
+
+    // Cards due today (dueDate <= end of today)
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999); // 23:59:59 today
+    const cardsDueToday = allCards.filter(
+        (card) => new Date(card.dueDate) <= todayEnd,
+    ).length;
+
+    // Retention rate: cards scheduled beyond today vs total
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const retentionRate =
+        totalCards === 0
+            ? 0
+            : Math.round(
+                  (allCards.filter((c) => new Date(c.dueDate) > todayStart)
+                      .length /
+                      totalCards) *
+                      100,
+              );
 
     return (
         <div className="flex flex-col flex-1 h-full overflow-y-auto p-8 items-center justify-center">
@@ -43,6 +89,37 @@ const Dashboard = () => {
                 <section>
                     <InspirationalQuotes />
                 </section>
+                {decks.length === 0 && (
+                    <section>
+                        <div
+                            className="flex flex-col items-center gap-5 border border-primary/10 rounded-xl p-10 bg-paper text-center"
+                            style={{ boxShadow: "0 2px 12px rgba(35,0,30,0.06)" }}>
+                            <div className="flex flex-col gap-2">
+                                <p className="font-display text-2xl text-primary">
+                                    No decks yet
+                                </p>
+                                <p className="font-ui text-sm text-primary/40 max-w-xs">
+                                    Create a new deck from scratch, or import an existing one from your file system.
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={createDeck}
+                                    className="flex items-center gap-2 font-ui text-sm px-5 py-2.5 rounded-lg text-paper transition-all"
+                                    style={{ backgroundColor: "var(--color-secondary)" }}>
+                                    <Plus className="w-4 h-4" />
+                                    Create a deck
+                                </button>
+                                <button
+                                    onClick={handleOpenFile}
+                                    className="flex items-center gap-2 font-ui text-sm px-4 py-2.5 rounded-lg border border-primary/15 text-primary/50 hover:text-primary hover:border-primary/30 transition-all">
+                                    <FolderOpen className="w-4 h-4" />
+                                    Import from file
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                )}
                 {lastDeck && (
                     <section>
                         <p className="font-ui text-xs uppercase tracking-widest text-primary/35 mb-3">
@@ -83,7 +160,8 @@ const Dashboard = () => {
                                     onClick={() => openTab(lastDeck)}
                                     className="flex items-center gap-2 font-ui text-sm px-5 py-2.5 rounded-lg text-paper transition-all"
                                     style={{
-                                        backgroundColor: "var(--color-secondary)",
+                                        backgroundColor:
+                                            "var(--color-secondary)",
                                     }}>
                                     <PlayCircle className="w-4 h-4" />
                                     Resume
@@ -158,7 +236,7 @@ const Dashboard = () => {
                         Activity — Last 6 Months
                     </p>
                     <div className="flex gap-1">
-                        {HEATMAP.map((week, wi) => (
+                        {heatmap.map((week, wi) => (
                             <div
                                 key={wi}
                                 className="flex flex-col gap-1">
@@ -180,12 +258,12 @@ const Dashboard = () => {
                         {
                             icon: <TrendingUp className="w-4 h-4" />,
                             label: "Retention Rate",
-                            value: "87.3%",
+                            value: `${retentionRate}%`,
                         },
                         {
                             icon: <Calendar className="w-4 h-4" />,
                             label: "Cards Due Today",
-                            value: totalCards.toString(),
+                            value: cardsDueToday.toString(),
                         },
                         {
                             icon: <Flame className="w-4 h-4" />,
