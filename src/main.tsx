@@ -31,6 +31,7 @@ import {
 } from "./data/cards";
 
 import { ICard, IDeck } from "./types/types";
+import { parseYaml } from "./yamlparse";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -131,6 +132,17 @@ app.whenReady().then(() => {
         "file:save",
         async (_event, filepath: string, content: string) => {
             fs.writeFileSync(filepath, content, "utf-8");
+        },
+    );
+    ipcMain.handle(
+        "dialog:saveFile",
+        async (_event, defaultName: string) => {
+            const { canceled, filePath } = await dialog.showSaveDialog({
+                defaultPath: defaultName,
+                filters: [{ name: "YAML", extensions: ["yaml"] }],
+            });
+            if (canceled || !filePath) return undefined;
+            return filePath;
         },
     );
     ipcMain.handle("db:getDeck", async (_event, deckId: string) => {
@@ -235,6 +247,20 @@ app.whenReady().then(() => {
             }
         },
     );
+
+    ipcMain.handle("yaml:importDeck", async () => {
+        const { canceled, filePaths } = await dialog.showOpenDialog({
+            properties: ["openFile"],
+            filters: [{ name: "YAML", extensions: ["yaml"] }],
+        });
+        if (canceled || filePaths.length === 0) return null;
+        const deck = parseYaml(filePaths[0]);
+        if (!deck) return null;
+        createDeck(deck.deckId, deck);
+        createCards(deck.cards, deck.deckId);
+        const cards = retrieveCards(deck.deckId);
+        return { ...deck, cards };
+    });
 
     ipcMain.handle("db:searchByKeyword", async (_event, keyword: string) => {
         return searchByKeyword(keyword);

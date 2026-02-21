@@ -71,8 +71,12 @@ interface AppState {
     incrementReviewed: () => void;
 
     editingDeckId: string | null;
-    openEditor: (deckId: string) => void;
-    createDeck: () => void;
+    editingCardId: string | null;
+    openEditor: (deckId: string, cardId?: string) => void;
+    createDeck: (name?: string) => void;
+    renameDeck: (deckId: string, newName: string) => void;
+    removeDeck: (deckId: string) => void;
+    updateDeckFilepath: (deckId: string, filepath: string) => void;
     updateCard: (deckId: string, card: ICard) => void;
     addCard: (deckId: string, card: ICard) => void;
     deleteCard: (deckId: string, cardId: string) => void;
@@ -135,15 +139,17 @@ export const useAppStore = create<AppState>()(
                 }),
 
             editingDeckId: null,
-            openEditor: (deckId) =>
-                set({ navView: "editor", editingDeckId: deckId }),
+            editingCardId: null,
+            openEditor: (deckId, cardId) =>
+                set({ navView: "editor", editingDeckId: deckId, editingCardId: cardId ?? null }),
 
-            createDeck: () => {
+            createDeck: (name) => {
                 const deckId = crypto.randomUUID();
+                const deckName = name?.trim() || "New Deck";
                 const now = new Date();
                 const newDeck: IDeck = {
                     deckId,
-                    deckName: "New Deck",
+                    deckName,
                     filepath: "",
                     lastUpdated: now,
                     created: now,
@@ -153,20 +159,58 @@ export const useAppStore = create<AppState>()(
                     cards: [],
                 };
                 set((state) => ({ decks: [...state.decks, newDeck] }));
+                window.electronAPI.createDeck(deckId, deckName, "").catch(console.error);
                 get().openEditor(deckId);
             },
 
+            renameDeck: (deckId, newName) => {
+                const deck = get().decks.find((d) => d.deckId === deckId);
+                set((state) => ({
+                    decks: state.decks.map((d) =>
+                        d.deckId === deckId ? { ...d, deckName: newName } : d,
+                    ),
+                }));
+                if (deck) window.electronAPI.updateDeck({ ...deck, deckName: newName }, "name", newName).catch(console.error);
+            },
+
+            removeDeck: (deckId) => {
+                const tabToClose = get().tabs.find((t) => t.deck.deckId === deckId);
+                if (tabToClose) get().closeTab(tabToClose.tabId);
+                set((state) => ({
+                    decks: state.decks.filter((d) => d.deckId !== deckId),
+                    pinnedDeckIds: state.pinnedDeckIds.filter((id) => id !== deckId),
+                    ...(state.editingDeckId === deckId
+                        ? { editingDeckId: null, editingCardId: null, navView: "decks" as NavView }
+                        : {}),
+                }));
+                window.electronAPI.deleteDeck(deckId).catch(console.error);
+            },
+
+            updateDeckFilepath: (deckId, filepath) => {
+                set((state) => ({
+                    decks: state.decks.map((d) =>
+                        d.deckId === deckId ? { ...d, filepath } : d,
+                    ),
+                }));
+            },
+
             updateCard: (deckId, card) => {
+                const patchCard = (c: ICard) => c.cardId === card.cardId ? card : c;
                 set((state) => ({
                     decks: state.decks.map((d) =>
                         d.deckId === deckId
-                            ? {
-                                  ...d,
-                                  cards: d.cards.map((c) =>
-                                      c.cardId === card.cardId ? card : c,
-                                  ),
-                              }
+                            ? { ...d, cards: d.cards.map(patchCard) }
                             : d,
+                    ),
+                    tabs: state.tabs.map((tab) =>
+                        tab.deck.deckId === deckId
+                            ? {
+                                  ...tab,
+                                  queue: tab.queue.map(patchCard),
+                                  history: tab.history.map(patchCard),
+                                  deck: { ...tab.deck, cards: tab.deck.cards.map(patchCard) },
+                              }
+                            : tab,
                     ),
                 }));
                 window.electronAPI.updateCard(card, "question", card.question).catch(console.error);
@@ -436,8 +480,6 @@ export const useAppStore = create<AppState>()(
                 pinnedDeckIds: state.pinnedDeckIds,
                 dailyGoal: state.dailyGoal,
                 reviewHistory: state.reviewHistory,
-                tabs: state.tabs,
-                activeTabId: state.activeTabId,
                 themePreset: state.themePreset,
                 fontSize: state.fontSize,
                 uiFont: state.uiFont,

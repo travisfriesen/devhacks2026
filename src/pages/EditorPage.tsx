@@ -1,23 +1,54 @@
-import React, { useState } from "react";
-import YAML from "yaml";
+import React, { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { ICard, IDeck } from "@/types/types";
 import Editor from "@/pages/Editor";
+import { deckToYaml } from "@/utils/deckToYaml";
 
 export default function EditorPage() {
-    const { decks, editingDeckId, updateCard, addCard, deleteCard, setNavView } =
+    const { decks, editingDeckId, editingCardId, updateCard, addCard, deleteCard, setNavView, updateDeckFilepath } =
         useAppStore();
 
     const deck = decks.find((d) => d.deckId === editingDeckId);
     const [selectedCardId, setSelectedCardId] = useState<string | null>(
-        deck?.cards[0]?.cardId ?? null,
+        (editingCardId && deck?.cards.find((c) => c.cardId === editingCardId))
+            ? editingCardId
+            : (deck?.cards[0]?.cardId ?? null),
     );
 
-    const saveDeckToDisk = (updatedDeck: IDeck) => {
-        if (!updatedDeck.filepath) return;
-        const content = YAML.stringify(updatedDeck);
-        window.electronAPI.saveFile(updatedDeck.filepath, content);
+    // When the sidebar navigates to a specific card, sync the selection.
+    useEffect(() => {
+        if (editingCardId) setSelectedCardId(editingCardId);
+    }, [editingCardId]);
+
+    // Prevents a second "Save As" dialog from opening while one is already in progress.
+    const saveAsInProgressRef = useRef(false);
+
+    const saveDeckToDisk = async (updatedDeck: IDeck) => {
+        let fp = updatedDeck.filepath;
+
+        if (!fp) {
+            // New deck with no source file yet — ask user where to save it.
+            if (saveAsInProgressRef.current) return;
+            saveAsInProgressRef.current = true;
+            try {
+                const chosen = await window.electronAPI.saveFileDialog(
+                    `${updatedDeck.deckName}.yaml`,
+                );
+                if (!chosen) return;
+                fp = chosen;
+                // Persist the chosen path to the DB and local state.
+                await window.electronAPI
+                    .updateDeck(updatedDeck, "filepath", fp)
+                    .catch(console.error);
+                updateDeckFilepath(updatedDeck.deckId, fp);
+            } finally {
+                saveAsInProgressRef.current = false;
+            }
+        }
+
+        const content = deckToYaml({ ...updatedDeck, filepath: fp });
+        window.electronAPI.saveFile(fp, content).catch(console.error);
     };
 
     const handleBack = () => setNavView("decks");

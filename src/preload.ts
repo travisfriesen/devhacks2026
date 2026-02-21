@@ -13,8 +13,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
     },
 
     openFile: () => ipcRenderer.invoke("dialog:openFile"),
+    importDeck: () => ipcRenderer.invoke("yaml:importDeck"),
     saveFile: (filepath: string, content: string) =>
         ipcRenderer.invoke("file:save", filepath, content),
+    saveFileDialog: (defaultName: string) =>
+        ipcRenderer.invoke("dialog:saveFile", defaultName),
 
     removeAllListeners: (channel: string) => {
         ipcRenderer.removeAllListeners(channel);
