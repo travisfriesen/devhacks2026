@@ -1,15 +1,16 @@
-export interface deck {
+export interface IDeck {
     deckId: string;
     deckName: string;
     filepath: string;
     lastUpdated: Date;
     created: Date;
+    lastUtilized: Date;
     uses: number;
     streak: number;
-    cards: Array<card>;
+    cards: Array<ICard>
 }
 
-export interface card {
+export interface ICard {
     deckId: string;
     cardId: string;
     question: string;

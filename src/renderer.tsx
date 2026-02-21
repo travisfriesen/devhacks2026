@@ -27,14 +27,15 @@
  */
 
 import "./theme/index.css";
+import "katex/dist/katex.min.css";
 import App from "./App";
 import { createRoot } from "react-dom/client";
-import { MemoryRouter } from "react-router-dom";
+import { useAppStore } from "./store/useAppStore";
+
+window.electronAPI.onNavView((view) => {
+    useAppStore.getState().setNavView(view);
+});
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
-root.render(
-    <MemoryRouter>
-        <App />
-    </MemoryRouter>,
-);
+root.render(<App />);
