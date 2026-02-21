@@ -1,51 +1,94 @@
-import { ICard } from "@/types/types";
+import { ICard } from "../types/types";
+import Database from "better-sqlite3";
+import { getDatabase } from "@/data/database";
+
+// @ts-expect-error just let it be its a typescript thing for now
+let db: Database | undefined;
 
 /**
- * Retrieves a card from the database.
+ * Gets a card from the database.
  * Returns null if the card does not exist.
  * @param cardId
  * @param deckId
  */
 export function retrieveCard(cardId: string, deckId: string): ICard {
-    return null;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `SELECT * FROM cards WHERE cardId = ? AND deckId = ?`,
+    );
+
+    return statement.get(cardId, deckId);
 }
 
 /**
- * Retrieves all the cards from the database with the given deckId.
+ * Gets all the cards from the database with the given deckId.
  * Returns null if the deck does not exist.
  * @param deckId
  */
 export function retrieveCards(deckId: string): ICard[] {
-    return null;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`SELECT * FROM cards WHERE deckId = ?`);
+
+    return statement.get(deckId);
 }
 
 /**
- * Retrieves all the cards from the database.
+ * Gets all the cards from the database.
  * Returns null if the deck does not exist.
  */
 export function retrieveAllCards(): ICard[] {
-    return null;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`SELECT * FROM cards`);
+
+    return statement.get();
 }
 
 /**
- * Creates the card in the database.
+ * Sets the card in the database.
  * Returns true if successful, false otherwise.
  * @param card
  * @param deckId
  */
 export function createCard(card: ICard, deckId: string): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `INSERT INTO cards (cardId, deckId, question, answer) VALUES (?, ?, ?, ?)`,
+    );
+
+    const changes = statement.run(
+        card.cardId,
+        deckId,
+        card.question,
+        card.answer,
+    );
+    return changes.changes == 1;
 }
 
 /**
- * Creates the cards in the database for the given deckId.
+ * Sets the cards in the database for the given deckId.
  * Should only be used on the first time a deck is created/imported.
- * Returns true if successful, false otherwise.
+ * Returns true if successful.
  * @param cards
  * @param deckId
  */
 export function createCards(cards: ICard[], deckId: string): boolean {
-    return false;
+    let returnValue = true;
+    for (const key in cards) {
+        returnValue = createCard(cards[key], deckId);
+    }
+    return returnValue;
 }
 
 /**
@@ -55,7 +98,15 @@ export function createCards(cards: ICard[], deckId: string): boolean {
  * @param deckId
  */
 export function deleteCard(cardId: string, deckId: string): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `DELETE FROM cards WHERE cardId = ? AND deckId = ?`,
+    );
+
+    return statement.get(cardId, deckId);
 }
 
 /**
@@ -64,7 +115,13 @@ export function deleteCard(cardId: string, deckId: string): boolean {
  * @param deckId
  */
 export function deleteAllCards(deckId: string): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`DELETE FROM cards WHERE deckId = ?`);
+
+    return statement.run(deckId);
 }
 
 /**
@@ -73,7 +130,15 @@ export function deleteAllCards(deckId: string): boolean {
  * @param question
  */
 export function updateCardQuestion(card: ICard, question: string): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `UPDATE cards SET question = ? WHERE cardId = ? AND deckId = ?`,
+    );
+
+    return statement.run(question, card.cardId, card.deckId);
 }
 
 /**
@@ -82,7 +147,15 @@ export function updateCardQuestion(card: ICard, question: string): boolean {
  * @param answer
  */
 export function updateCardAnswer(card: ICard, answer: string): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `UPDATE cards SET answer = ? WHERE cardId = ? AND deckId = ?`,
+    );
+
+    return statement.run(answer, card.cardId, card.deckId);
 }
 
 /**
@@ -91,7 +164,15 @@ export function updateCardAnswer(card: ICard, answer: string): boolean {
  * @param later
  */
 export function updateCardLaters(card: ICard, later: number): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `UPDATE cards SET laters = ? WHERE cardId = ? AND deckId = ?`,
+    );
+
+    return statement.run(later, card.cardId, card.deckId);
 }
 
 /**
@@ -100,5 +181,13 @@ export function updateCardLaters(card: ICard, later: number): boolean {
  * @param dueDate
  */
 export function updateCardDueDate(card: ICard, dueDate: Date): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `UPDATE cards SET dueDate = ? WHERE cardId = ? AND deckId = ?`,
+    );
+
+    return statement.run(dueDate, card.cardId, card.deckId);
 }

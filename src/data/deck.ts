@@ -1,20 +1,36 @@
-import { IDeck } from "@/types/types";
+import { IDeck } from "../types/types";
+import { getDatabase } from "@/data/database";
+
+// @ts-expect-error aaaaHHHH
+let db: Database | undefined;
 
 /**
  * Retrieves a deck from the database.
  * Returns null if the deck does not exist.
  * @param deckId
  */
-export function retrieveDeck(deckId: string):IDeck {
-    return null;
+export function retrieveDeck(deckId: string): IDeck {
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`SELECT * FROM decks WHERE deckId = ?`);
+
+    return statement.get(deckId);
 }
 
 /**
  * Retrieves all decks from the database.
  * Returns null if there are no decks.
  */
-export function retrieveDecks():IDeck[] {
-    return null;
+export function retrieveDecks(): IDeck[] {
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`SELECT * FROM decks`);
+
+    return statement.all();
 }
 
 /**
@@ -24,7 +40,15 @@ export function retrieveDecks():IDeck[] {
  * @param deck
  */
 export function createDeck(deckId: string, deck: IDeck): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `INSERT INTO decks (deckId, name, filepath) VALUES (?,?,?)`,
+    );
+
+    return statement.run(deckId, deck.deckName, deck.filepath);
 }
 
 /**
@@ -33,7 +57,13 @@ export function createDeck(deckId: string, deck: IDeck): boolean {
  * @param deckId
  */
 export function deleteDeck(deckId: string): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`DELETE FROM decks WHERE deckId = ?`);
+
+    return statement.run(deckId);
 }
 
 /**
@@ -43,7 +73,15 @@ export function deleteDeck(deckId: string): boolean {
  * @param filepath
  */
 export function updateDeckFilepath(deck: IDeck, filepath: string): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `UPDATE decks SET filepath = ? WHERE deckId = ?`,
+    );
+
+    return statement.run(filepath, deck.deckId);
 }
 
 /**
@@ -53,7 +91,13 @@ export function updateDeckFilepath(deck: IDeck, filepath: string): boolean {
  * @param name
  */
 export function updateDeckName(deck: IDeck, name: string): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`UPDATE decks SET name = ? WHERE deckId = ?`);
+
+    return statement.run(name, deck.deckId);
 }
 
 /**
@@ -63,7 +107,15 @@ export function updateDeckName(deck: IDeck, name: string): boolean {
  * @param date
  */
 export function updateDeckLastUpdated(deck: IDeck, date: Date): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `UPDATE decks SET name = ? WHERE lastUpdated = ?`,
+    );
+
+    return statement.run(deck.deckName, date);
 }
 
 /**
@@ -73,7 +125,13 @@ export function updateDeckLastUpdated(deck: IDeck, date: Date): boolean {
  * @param uses
  */
 export function updateDeckUses(deck: IDeck, uses: number): boolean {
-    return false;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`UPDATE decks SET name = ? WHERE uses = ?`);
+
+    return statement.run(deck.deckName, uses);
 }
 
 /**
@@ -82,7 +140,13 @@ export function updateDeckUses(deck: IDeck, uses: number): boolean {
  * @param deck
  * @param streak
  */
-export function updateDeckStreak(deck: IDeck, streak: number): boolean {
+export function updateDeckStreak(deck: IDeck): boolean {
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(`UPDATE decks SET name = ? WHERE streak = ?`);
+
     const today = new Date();
     // stupid yesterday function because Date.getDate(Date() -1) errors sometimes,
     // and doesn't necessarily handle the ends of the months.
@@ -123,5 +187,5 @@ export function updateDeckStreak(deck: IDeck, streak: number): boolean {
         deck.streak += 1;
     }
 
-    return false;
+    return statement.run(deck.deckName, deck.streak);
 }
