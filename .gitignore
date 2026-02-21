@@ -59,3 +59,4 @@ spec/fixtures/logo.png
 
 # database file
 /src/database/cards.db
+/src/data/cards.db
