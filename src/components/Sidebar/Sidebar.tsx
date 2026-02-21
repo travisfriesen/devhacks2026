@@ -5,53 +5,9 @@ import {
     PanelLeftClose,
     PanelLeft,
     FolderOpen,
-    BarChart3,
-    Settings,
 } from "lucide-react";
-import { useAppStore, NavView } from "@/store/useAppStore";
-import { IDeck } from "@/types/types";
-
-const MOCK_DECKS: IDeck[] = [
-    {
-        deckId: "1",
-        deckName: "Spanish Vocabulary",
-        filepath: "",
-        lastUpdated: new Date(),
-        created: new Date(),
-        uses: 10,
-        streak: 5,
-        cards: [],
-    },
-    {
-        deckId: "2",
-        deckName: "History Facts",
-        filepath: "",
-        lastUpdated: new Date(),
-        created: new Date(),
-        uses: 20,
-        streak: 10,
-        cards: [],
-    },
-    {
-        deckId: "3",
-        deckName: "Science Concepts",
-        filepath: "",
-        lastUpdated: new Date(),
-        created: new Date(),
-        uses: 15,
-        streak: 7,
-        cards: [],
-    },
-];
-
-const BOTTOM_NAV: { view: NavView; icon: React.ReactNode; label: string }[] = [
-    { view: "stats", icon: <BarChart3 className="w-4 h-4" />, label: "Stats" },
-    {
-        view: "settings",
-        icon: <Settings className="w-4 h-4" />,
-        label: "Settings",
-    },
-];
+import { useAppStore } from "@/store/useAppStore";
+import { MOCK_DECKS, BOTTOM_NAV } from '@/global/constants';
 
 const Sidebar = () => {
     const {
@@ -110,7 +66,7 @@ const Sidebar = () => {
                                 title={
                                     !sidebarVisible ? deck.deckName : undefined
                                 }
-                                className="w-full text-left flex items-center gap-2.5 transition-colors font-ui text-sm"
+                                className="w-full text-left flex items-center gap-2.5 transition-colors font-ui text-sm cursor-pointer"
                                 style={{
                                     // sorry, didn't want to add more tailwind bs classes for the padding changes
                                     padding: sidebarVisible
