@@ -1,18 +1,18 @@
 import React, { useEffect } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { Flashcard } from "@/components/Flashcard";
-import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Pencil, RotateCcw } from "lucide-react";
 import { RECALL_BUTTONS } from "@/global/constants";
 
 const Deck = () => {
     const {
         tabs,
         activeTabId,
-        completed,
         nextCard,
         prevCard,
         flipCard,
         answerCard,
+        openEditor,
     } = useAppStore();
     const tab = tabs.find((t) => t.tabId === activeTabId);
 
@@ -65,9 +65,18 @@ const Deck = () => {
                     <span className="font-ui text-xs text-primary/40 uppercase tracking-widest">
                         {tab.deck.deckName}
                     </span>
-                    <span className="font-ui text-xs text-primary/40">
-                        {tab.completed} / {totalCards}
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => openEditor(tab.deck.deckId)}
+                            className="flex items-center gap-1.5 font-ui text-xs text-primary/30 hover:text-primary/60 transition-colors"
+                            title="Edit deck">
+                            <Pencil className="w-3.5 h-3.5" />
+                            Edit
+                        </button>
+                        <span className="font-ui text-xs text-primary/40">
+                            {tab.completed} / {totalCards}
+                        </span>
+                    </div>
                 </div>
                 <div className="w-full h-0.5 bg-primary/10 rounded-full overflow-hidden">
                     <div

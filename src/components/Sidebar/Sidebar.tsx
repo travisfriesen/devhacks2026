@@ -5,6 +5,7 @@ import {
     PanelLeftClose,
     PanelLeft,
     FolderOpen,
+    Star,
 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { MOCK_DECKS, BOTTOM_NAV } from "@/global/constants";
@@ -20,10 +21,12 @@ const Sidebar = () => {
         navView,
         setNavView,
         setDecks,
+        pinnedDeckIds,
+        togglePinDeck,
     } = useAppStore();
 
     useEffect(() => {
-        setDecks(MOCK_DECKS);
+        if (decks.length === 0) setDecks(MOCK_DECKS);
     }, []);
     const handleOpenFile = async () => {
         const path = await window.electronAPI.openFile();
@@ -70,22 +73,20 @@ const Sidebar = () => {
                     const isActive = openTab_?.tabId === activeTabId;
 
                     return (
-                        <li key={deck.deckId}>
+                        <li key={deck.deckId} className="group flex items-center">
                             <button
                                 onClick={() => openTab(deck)}
                                 title={
                                     !sidebarVisible ? deck.deckName : undefined
                                 }
-                                className="w-full text-left flex items-center gap-2.5 transition-colors font-ui text-sm cursor-pointer"
+                                className="flex-1 text-left flex items-center gap-2.5 transition-colors font-ui text-sm cursor-pointer min-w-0"
                                 style={{
-                                    // sorry, didn't want to add more tailwind bs classes for the padding changes
                                     padding: sidebarVisible
-                                        ? "0.625rem 1rem"
+                                        ? "0.625rem 0.625rem 0.625rem 1rem"
                                         : "0.625rem 0",
                                     justifyContent: sidebarVisible
                                         ? "flex-start"
                                         : "center",
-
                                     backgroundColor:
                                         isActive && "rgba(185,49,79,0.12)",
                                     borderLeft:
@@ -97,19 +98,50 @@ const Sidebar = () => {
                                 }}>
                                 <BookOpen className="w-3.5 h-3.5 shrink-0" />
                                 {sidebarVisible && (
-                                    <>
-                                        <span className="truncate">
-                                            {deck.deckName}
-                                        </span>
-                                        {deck.streak > 0 && (
-                                            <span className="ml-auto flex items-center gap-0.5 text-xs text-tertiary shrink-0">
-                                                <Flame className="w-3 h-3" />
-                                                {deck.streak}
-                                            </span>
-                                        )}
-                                    </>
+                                    <span className="truncate">
+                                        {deck.deckName}
+                                    </span>
                                 )}
                             </button>
+                            {sidebarVisible && (
+                                <div className="relative flex items-center justify-center shrink-0 w-8 pr-2">
+                                    {/* Streak: fades out on hover or when pinned */}
+                                    {deck.streak > 0 && (
+                                        <span
+                                            className={`flex items-center gap-0.5 text-xs text-tertiary transition-opacity pointer-events-none ${pinnedDeckIds.includes(deck.deckId)
+                                                ? "opacity-0"
+                                                : "opacity-100 group-hover:opacity-0"
+                                                }`}>
+                                            <Flame className="w-3 h-3" />
+                                            {deck.streak}
+                                        </span>
+                                    )}
+                                    {/* Star: fades in on hover or when pinned, sits over streak slot */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            togglePinDeck(deck.deckId);
+                                        }}
+                                        title={
+                                            pinnedDeckIds.includes(deck.deckId)
+                                                ? "Unpin deck"
+                                                : "Pin deck"
+                                        }
+                                        className={`${deck.streak > 0 ? "absolute" : "relative"} p-1 rounded transition-all ${pinnedDeckIds.includes(deck.deckId)
+                                            ? "opacity-100 text-yellow-400"
+                                            : "opacity-0 group-hover:opacity-60 text-paper/50 hover:!opacity-100 hover:text-yellow-400"
+                                            }`}>
+                                        <Star
+                                            className="w-3 h-3"
+                                            fill={
+                                                pinnedDeckIds.includes(deck.deckId)
+                                                    ? "currentColor"
+                                                    : "none"
+                                            }
+                                        />
+                                    </button>
+                                </div>
+                            )}
                         </li>
                     );
                 })}
@@ -133,7 +165,7 @@ const Sidebar = () => {
                 </button>
 
                 {BOTTOM_NAV.map(({ view, icon, label }) => {
-                    const isActive = navView === view && !activeTabId;
+                    const isActive = navView === view && navView !== "editor" && !activeTabId;
                     return (
                         <button
                             key={view}

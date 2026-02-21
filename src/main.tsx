@@ -1,5 +1,6 @@
 import { app, Menu, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "node:path";
+import fs from "node:fs";
 import started from "electron-squirrel-startup";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -10,7 +11,7 @@ if (started) {
 async function handleFileOpen() {
     const { canceled, filePaths } = await dialog.showOpenDialog({
         properties: ["openFile"],
-        filters: [{name: "YAML", extensions: ["yaml"]}],
+        filters: [{ name: "YAML", extensions: ["yaml"] }],
     });
     if (!canceled) {
         return filePaths[0];
@@ -97,6 +98,9 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
     ipcMain.handle("dialog:openFile", handleFileOpen);
+    ipcMain.handle("file:save", (_event, filepath: string, content: string) => {
+        fs.writeFileSync(filepath, content, "utf-8");
+    });
     createWindow();
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

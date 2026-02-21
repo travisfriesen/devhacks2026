@@ -1,5 +1,6 @@
 import React from "react";
 import { IDeckCardProps } from ".";
+import { Star } from 'lucide-react';
 
 const DeckCard: React.FC<IDeckCardProps> = (props) => {
     const {
@@ -21,6 +22,7 @@ const DeckCard: React.FC<IDeckCardProps> = (props) => {
             <p>Uses: {uses}</p>
             <p>Streak: {streak}</p>
             <p>Filepath: {filepath}</p>
+            <Star className="w-4 h-4 text-yellow-500" />
         </div>
     );
 };
