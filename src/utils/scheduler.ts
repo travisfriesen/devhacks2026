@@ -38,10 +38,8 @@ interface ICardQueue {
 export function scheduleCard(
     card: ICard,
     rating: RecallRating,
-    queue: ICard[],
-): ICardQueue {
-    const rest = queue.slice(1);
-    let updatedCard = { ...card };
+): ICard {
+    let updatedCard = card;
 
     switch (rating) {
         case 1: // again
@@ -56,21 +54,21 @@ export function scheduleCard(
             // This is due tomorrow, so leave the queue but update the date in the card
             let tomorrow = incrementDate(card.dueDate, 1);
 
-            updatedCard.dueDate = incrementDate(tomorrow, 1);
+            updatedCard.dueDate = tomorrow;
             updateCardDueDate(card, tomorrow);
 
             break;
         case 4: // later
             // This depends on the fibonacci backoff date algorithm
+            let newDueDate = incrementDate(card.dueDate, fibonacci(card.laters));
+
+            updatedCard.dueDate = newDueDate;
+            updateCardDueDate(card, newDueDate);
+            updateCardLaters(card, card.laters+1);
             break;
     }
 
-
-    return {
-        queue: [...rest, updatedCard],
-        updatedCard,
-    };
-    
+    return updatedCard;    
 }
 
 function incrementDate(date: Date, addAmt: number): Date {

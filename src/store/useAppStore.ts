@@ -251,8 +251,7 @@ export const useAppStore = create<AppState>()(
                 const [current, ...rest] = tab.queue;
                 const { updatedCard } = scheduleCard(
                     current,
-                    rating,
-                    tab.queue,
+                    rating
                 );
                 const updatedDeckCards = tab.deck.cards.map((c) =>
                     c.cardId === updatedCard.cardId ? updatedCard : c,
