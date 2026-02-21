@@ -1,11 +1,11 @@
-import { deck } from "../types/types";
+import { IDeck } from "@/types/types";
 
 /**
  * Retrieves a deck from the database.
  * Returns null if the deck does not exist.
  * @param deckId
  */
-export function retrieveDeck(deckId: string): deck {
+export function retrieveDeck(deckId: string):IDeck {
     return null;
 }
 
@@ -13,7 +13,7 @@ export function retrieveDeck(deckId: string): deck {
  * Retrieves all decks from the database.
  * Returns null if there are no decks.
  */
-export function retrieveDecks(): deck[] {
+export function retrieveDecks():IDeck[] {
     return null;
 }
 
@@ -23,7 +23,7 @@ export function retrieveDecks(): deck[] {
  * @param deckId
  * @param deck
  */
-export function createDeck(deckId: string, deck: deck): boolean {
+export function createDeck(deckId: string, deck: IDeck): boolean {
     return false;
 }
 
@@ -42,7 +42,7 @@ export function deleteDeck(deckId: string): boolean {
  * @param deck
  * @param filepath
  */
-export function updateDeckFilepath(deck: deck, filepath: string): boolean {
+export function updateDeckFilepath(deck: IDeck, filepath: string): boolean {
     return false;
 }
 
@@ -52,7 +52,7 @@ export function updateDeckFilepath(deck: deck, filepath: string): boolean {
  * @param deck
  * @param name
  */
-export function updateDeckName(deck: deck, name: string): boolean {
+export function updateDeckName(deck: IDeck, name: string): boolean {
     return false;
 }
 
@@ -62,7 +62,7 @@ export function updateDeckName(deck: deck, name: string): boolean {
  * @param deck
  * @param date
  */
-export function updateDeckLastUpdated(deck: deck, date: Date): boolean {
+export function updateDeckLastUpdated(deck: IDeck, date: Date): boolean {
     return false;
 }
 
@@ -72,7 +72,7 @@ export function updateDeckLastUpdated(deck: deck, date: Date): boolean {
  * @param deck
  * @param uses
  */
-export function updateDeckUses(deck: deck, uses: number): boolean {
+export function updateDeckUses(deck: IDeck, uses: number): boolean {
     return false;
 }
 
@@ -82,7 +82,7 @@ export function updateDeckUses(deck: deck, uses: number): boolean {
  * @param deck
  * @param streak
  */
-export function updateDeckStreak(deck: deck, streak: number): boolean {
+export function updateDeckStreak(deck: IDeck, streak: number): boolean {
     const today = new Date();
     // stupid yesterday function because Date.getDate(Date() -1) errors sometimes,
     // and doesn't necessarily handle the ends of the months.
