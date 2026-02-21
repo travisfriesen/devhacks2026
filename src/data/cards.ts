@@ -1,6 +1,6 @@
 import {ICard} from "../types/types";
 import Database from "better-sqlite3";
-import {getDatabase} from "@/data/database";
+import { getDatabase } from "./database";
 
 // @ts-expect-error just let it be its a typescript thing for now
 let db: Database | undefined;
@@ -130,7 +130,7 @@ export function deleteCard(cardId: string, deckId: string): boolean {
         `DELETE FROM cards WHERE cardId = ? AND deckId = ?`,
     );
 
-    return statement.get(cardId, deckId);
+    return statement.run(cardId, deckId);
 }
 
 /**

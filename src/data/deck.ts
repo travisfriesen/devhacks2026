@@ -1,5 +1,5 @@
-import {ICard, IDeck} from "@/types/types";
-import { getDatabase } from "@/data/database";
+import { IDeck } from "../types/types";
+import { getDatabase } from "./database";
 
 // @ts-expect-error aaaaHHHH
 let db: Database | undefined;
