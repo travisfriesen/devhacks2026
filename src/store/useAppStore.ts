@@ -324,10 +324,9 @@ export const useAppStore = create<AppState>()(
                 const currentTab = get().tabs.find((t) => t.tabId === tabId);
                 if (!currentTab || currentTab.queue.length === 0) return;
                 const [currentCard] = currentTab.queue;
-                const { updatedCard } = scheduleCard(
+                const updatedCard = scheduleCard(
                     currentCard,
-                    rating,
-                    currentTab.queue,
+                    rating
                 );
 
                 set((state) => ({
