@@ -32,9 +32,9 @@ function fixCardTypeArray(card: ICard[]): ICard[] {
  * @param cardId
  * @param deckId
  */
-export function retrieveCard(cardId: string, deckId: string): ICard {
+export function retrieveCard(dbPath: string, cardId: string, deckId: string): ICard {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -50,9 +50,9 @@ export function retrieveCard(cardId: string, deckId: string): ICard {
  * Returns null if the deck does not exist.
  * @param deckId
  */
-export function retrieveCards(deckId: string): ICard[] {
+export function retrieveCards(dbPath: string, deckId: string): ICard[] {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(`SELECT * FROM cards WHERE deckId = ?`);
@@ -65,9 +65,9 @@ export function retrieveCards(deckId: string): ICard[] {
  * Gets all the cards from the database.
  * Returns null if the deck does not exist.
  */
-export function retrieveAllCards(): ICard[] {
+export function retrieveAllCards(dbPath: string, ): ICard[] {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(`SELECT * FROM cards`);
@@ -82,9 +82,9 @@ export function retrieveAllCards(): ICard[] {
  * @param card
  * @param deckId
  */
-export function createCard(card: ICard, deckId: string): boolean {
+export function createCard(dbPath: string, card: ICard, deckId: string): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -107,10 +107,10 @@ export function createCard(card: ICard, deckId: string): boolean {
  * @param cards
  * @param deckId
  */
-export function createCards(cards: ICard[], deckId: string): boolean {
+export function createCards(dbPath: string, cards: ICard[], deckId: string): boolean {
     let returnValue = true;
     for (const key in cards) {
-        returnValue = createCard(cards[key], deckId);
+        returnValue = createCard(dbPath, cards[key], deckId);
     }
     return returnValue;
 }
@@ -121,9 +121,9 @@ export function createCards(cards: ICard[], deckId: string): boolean {
  * @param cardId
  * @param deckId
  */
-export function deleteCard(cardId: string, deckId: string): boolean {
+export function deleteCard(dbPath: string, cardId: string, deckId: string): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -138,9 +138,9 @@ export function deleteCard(cardId: string, deckId: string): boolean {
  * Returns true if successful, false otherwise.
  * @param deckId
  */
-export function deleteAllCards(deckId: string): boolean {
+export function deleteAllCards(dbPath: string, deckId: string): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(`DELETE FROM cards WHERE deckId = ?`);
@@ -153,9 +153,9 @@ export function deleteAllCards(deckId: string): boolean {
  * @param card
  * @param question
  */
-export function updateCardQuestion(card: ICard, question: string): boolean {
+export function updateCardQuestion(dbPath: string, card: ICard, question: string): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -170,9 +170,9 @@ export function updateCardQuestion(card: ICard, question: string): boolean {
  * @param card
  * @param answer
  */
-export function updateCardAnswer(card: ICard, answer: string): boolean {
+export function updateCardAnswer(dbPath: string, card: ICard, answer: string): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -187,9 +187,9 @@ export function updateCardAnswer(card: ICard, answer: string): boolean {
  * @param card
  * @param later
  */
-export function updateCardLaters(card: ICard, later: number): boolean {
+export function updateCardLaters(dbPath: string, card: ICard, later: number): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -204,9 +204,9 @@ export function updateCardLaters(card: ICard, later: number): boolean {
  * @param card
  * @param dueDate
  */
-export function updateCardDueDate(card: ICard, dueDate: Date): boolean {
+export function updateCardDueDate(dbPath: string, card: ICard, dueDate: Date): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(

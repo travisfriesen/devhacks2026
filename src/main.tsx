@@ -14,7 +14,6 @@ import {
     updateDeckUses,
     updateDeckStreak,
 } from "./data/deck";
-import { getDatabase } from "./data/database";
 import { searchCards, searchByKeyword, searchDecks } from "./data/search";
 import {
     retrieveCard,
@@ -36,6 +35,8 @@ import { ICard, IDeck } from "./types/types";
 if (started) {
     app.quit();
 }
+
+let dbPath: string = app.getPath('userData');
 
 async function handleFileOpen() {
     const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -134,17 +135,17 @@ app.whenReady().then(() => {
         },
     );
     ipcMain.handle("db:getDeck", async (_event, deckId: string) => {
-        const deck = retrieveDeck(deckId);
+        const deck = retrieveDeck(dbPath, deckId);
         if (!deck) {
             throw new Error("Deck not found");
         }
-        const cards = retrieveCards(deckId);
+        const cards = retrieveCards(dbPath, deckId);
         return { ...deck, cards };
     });
     ipcMain.handle(
         "db:retrieveCard",
         async (_event, cardId: string, deckId: string) => {
-            const card = retrieveCard(cardId, deckId);
+            const card = retrieveCard(dbPath, cardId, deckId);
             if (!card) {
                 throw new Error("Card not found");
             }
@@ -152,20 +153,20 @@ app.whenReady().then(() => {
         },
     );
     ipcMain.handle("db:retrieveAllCards", async () => {
-        const cards = retrieveAllCards();
+        const cards = retrieveAllCards(dbPath);
         if (!cards) {
             throw new Error("No cards found");
         }
         return cards;
     });
     ipcMain.handle("db:deleteAllCards", async (_event, deckId: string) => {
-        return deleteAllCards(deckId);
+        return deleteAllCards(dbPath, deckId);
     });
     ipcMain.handle("db:getDecks", async () => {
         // call retrieveDecks, for each deck call retrieveCards and add to the deck object, then return the array of decks
-        const decks = retrieveDecks() || [];
+        const decks = retrieveDecks(dbPath) || [];
         const decksWithCards = decks.map((deck) => {
-            const cards = retrieveCards(deck.deckId);
+            const cards = retrieveCards(dbPath, deck.deckId);
             return { ...deck, cards };
         });
 
@@ -175,28 +176,28 @@ app.whenReady().then(() => {
         "db:createDeck",
         async (_event, deckId: string, deckName: string, filepath: string) => {
             const deck = { deckId, deckName, filepath } as IDeck;
-            return createDeck(deckId, deck);
+            return createDeck(dbPath, deckId, deck);
         },
     );
     ipcMain.handle("db:deleteDeck", async (_event, deckId: string) => {
-        return deleteDeck(deckId);
+        return deleteDeck(dbPath, deckId);
     });
     ipcMain.handle(
         "db:createCard",
         async (_event, card: ICard, deckId: string) => {
-            return createCard(card, deckId);
+            return createCard(dbPath, card, deckId);
         },
     );
     ipcMain.handle(
         "db:createCards",
         async (_event, cards: ICard[], deckId: string) => {
-            return createCards(cards, deckId);
+            return createCards(dbPath, cards, deckId);
         },
     );
     ipcMain.handle(
         "db:deleteCard",
         async (_event, cardId: string, deckId: string) => {
-            return deleteCard(cardId, deckId);
+            return deleteCard(dbPath, cardId, deckId);
         },
     );
     ipcMain.handle(
@@ -204,13 +205,13 @@ app.whenReady().then(() => {
         async (_event, card: ICard, field: string, value: any) => {
             switch (field) {
                 case "question":
-                    return updateCardQuestion(card, value);
+                    return updateCardQuestion(dbPath, card, value);
                 case "answer":
-                    return updateCardAnswer(card, value);
+                    return updateCardAnswer(dbPath, card, value);
                 case "laters":
-                    return updateCardLaters(card, value);
+                    return updateCardLaters(dbPath, card, value);
                 case "dueDate":
-                    return updateCardDueDate(card, value);
+                    return updateCardDueDate(dbPath, card, value);
                 default:
                     throw new Error("Invalid field");
             }
@@ -221,15 +222,15 @@ app.whenReady().then(() => {
         async (_event, deck: IDeck, field: string, value: any) => {
             switch (field) {
                 case "name":
-                    return updateDeckName(deck, value);
+                    return updateDeckName(dbPath, deck, value);
                 case "filepath":
-                    return updateDeckFilepath(deck, value);
+                    return updateDeckFilepath(dbPath, deck, value);
                 case "lastUpdated":
-                    return updateDeckLastUpdated(deck, value);
+                    return updateDeckLastUpdated(dbPath, deck, value);
                 case "uses":
-                    return updateDeckUses(deck, value);
+                    return updateDeckUses(dbPath, deck, value);
                 case "streak":
-                    return updateDeckStreak(deck, value);
+                    return updateDeckStreak(dbPath, deck);
                 default:
                     throw new Error("Invalid field");
             }
@@ -237,13 +238,13 @@ app.whenReady().then(() => {
     );
 
     ipcMain.handle("db:searchByKeyword", async (_event, keyword: string) => {
-        return searchByKeyword(keyword);
+        return searchByKeyword(dbPath, keyword);
     });
     ipcMain.handle("db:searchDecks", async (_event, keyword: string) => {
-        return searchDecks(keyword);
+        return searchDecks(dbPath, keyword);
     });
     ipcMain.handle("db:searchCards", async (_event, keyword: string) => {
-        return searchCards(keyword);
+        return searchCards(dbPath, keyword);
     });
 
     createWindow();

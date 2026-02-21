@@ -27,9 +27,9 @@ function fixDeckTypeArray(decks: Record<string, unknown>[]): IDeck[] {
  * Returns null if the deck does not exist.
  * @param deckId
  */
-export function retrieveDeck(deckId: string): IDeck {
+export function retrieveDeck(dbPath: string, deckId: string): IDeck {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(`SELECT * FROM decks WHERE deckId = ?`);
@@ -42,9 +42,9 @@ export function retrieveDeck(deckId: string): IDeck {
  * Retrieves all decks from the database.
  * Returns null if there are no decks.
  */
-export function retrieveDecks(): IDeck[] {
+export function retrieveDecks(dbPath: string): IDeck[] {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(`SELECT * FROM decks`);
@@ -59,9 +59,9 @@ export function retrieveDecks(): IDeck[] {
  * @param deckId
  * @param deck
  */
-export function createDeck(deckId: string, deck: IDeck): boolean {
+export function createDeck(deckId: string, dbPath: string, deck: IDeck): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -76,9 +76,9 @@ export function createDeck(deckId: string, deck: IDeck): boolean {
  * Returns true if successful, false otherwise
  * @param deckId
  */
-export function deleteDeck(deckId: string): boolean {
+export function deleteDeck(dbPath: string, deckId: string): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(`DELETE FROM decks WHERE deckId = ?`);
@@ -92,9 +92,9 @@ export function deleteDeck(deckId: string): boolean {
  * @param deck
  * @param filepath
  */
-export function updateDeckFilepath(deck: IDeck, filepath: string): boolean {
+export function updateDeckFilepath(dbPath: string, deck: IDeck, filepath: string): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -110,9 +110,9 @@ export function updateDeckFilepath(deck: IDeck, filepath: string): boolean {
  * @param deck
  * @param name
  */
-export function updateDeckName(deck: IDeck, name: string): boolean {
+export function updateDeckName(dbPath: string, deck: IDeck, name: string): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(`UPDATE decks SET name = ? WHERE deckId = ?`);
@@ -126,9 +126,9 @@ export function updateDeckName(deck: IDeck, name: string): boolean {
  * @param deck
  * @param date
  */
-export function updateDeckLastUpdated(deck: IDeck, date: Date): boolean {
+export function updateDeckLastUpdated(dbPath: string, deck: IDeck, date: Date): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -145,9 +145,9 @@ export function updateDeckLastUpdated(deck: IDeck, date: Date): boolean {
  * @param deck
  * @param uses
  */
-export function updateDeckUses(deck: IDeck, uses: number): boolean {
+export function updateDeckUses(dbPath: string, deck: IDeck, uses: number): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(`UPDATE decks SET uses = ? WHERE deckId = ?`);
@@ -161,9 +161,9 @@ export function updateDeckUses(deck: IDeck, uses: number): boolean {
  * @param deck
  * @param streak
  */
-export function updateDeckStreak(deck: IDeck): boolean {
+export function updateDeckStreak(dbPath: string, deck: IDeck): boolean {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(

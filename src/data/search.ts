@@ -10,8 +10,8 @@ let db: Database | undefined;
  * Returns empty arrays if nothing is found.
  * @param keyword
  */
-export function searchByKeyword(keyword: string): [decks: IDeck[], cards: ICard[]] {
-    return [searchDecks(keyword), searchCards(keyword)];
+export function searchByKeyword(dbPath: string, keyword: string): [decks: IDeck[], cards: ICard[]] {
+    return [searchDecks(dbPath, keyword), searchCards(dbPath, keyword)];
 }
 
 /**
@@ -19,9 +19,9 @@ export function searchByKeyword(keyword: string): [decks: IDeck[], cards: ICard[
  * Returns an empty array if nothing is found.
  * @param keyword
  */
-export function searchDecks(keyword: string): IDeck[] {
+export function searchDecks(dbPath: string, keyword: string): IDeck[] {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
@@ -36,9 +36,9 @@ export function searchDecks(keyword: string): IDeck[] {
  * Returns an empty array if nothing is found.
  * @param keyword
  */
-export function searchCards(keyword: string): ICard[] {
+export function searchCards(dbPath: string, keyword: string): ICard[] {
     if (db === undefined) {
-        db = getDatabase();
+        db = getDatabase(dbPath);
     }
 
     const statement = db.prepare(
