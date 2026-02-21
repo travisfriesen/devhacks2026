@@ -11,7 +11,7 @@ function heatColor(intensity: number): string {
     return "bg-primary";
 }
 
-const Stats = () => {
+const Search = () => {
     const { decks, openTab } = useAppStore();
 
     const allCards = decks.flatMap((deck) =>
@@ -102,5 +102,5 @@ const Stats = () => {
     );
 };
 
-export default Stats;
+export default Search;
 

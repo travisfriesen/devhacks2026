@@ -37,10 +37,10 @@ const createWindow = () => {
                     },
                 },
                 {
-                    label: "Stats",
+                    label: "Search",
                     accelerator: "CmdOrCtrl+2",
                     click: () => {
-                        mainWindow.webContents.send("set-nav-view", "stats");
+                        mainWindow.webContents.send("set-nav-view", "search");
                     },
                 },
                 {

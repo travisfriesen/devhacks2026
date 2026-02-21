@@ -8,7 +8,7 @@ import Dashboard from "@/pages/Dashboard";
 import Deck from "@/pages/Deck";
 
 import { useAppStore } from "@/store/useAppStore";
-import Stats from "./pages/Stats";
+import Search from "./pages/Search";
 
 const App = () => {
     const { activeTabId, navView } = useAppStore();
@@ -16,7 +16,7 @@ const App = () => {
     const renderMain = () => {
         if (activeTabId) return <Deck />;
         if (navView === "decks") return <Dashboard />;
-        if (navView === "stats") return <Stats />;
+        if (navView === "search") return <Search />;
         if (navView === "settings")
             return (
                 <div className="p-8 font-ui text-primary/60">

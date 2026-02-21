@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { ICard, IDeck } from "@/types/types";
 import { RecallRating, scheduleCard } from "@/utils/scheduler";
 
-export type NavView = "decks" | "stats" | "settings";
+export type NavView = "decks" | "search" | "settings";
 
 export interface ITab {
     tabId: string;
