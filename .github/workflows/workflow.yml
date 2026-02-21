@@ -1,0 +1,93 @@
+name: Make Release (all platforms)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (optional when manually dispatching)'
+        required: false
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run electron-forge make
+        run: npm run make
+
+      - name: List produced artifacts
+        run: |
+          echo "Contents of out/make (if present):"
+          ls -la out || true
+          ls -la out/make || true
+
+      - name: Upload platform artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-${{ matrix.os }}
+          path: out/make
+          retention-days: 7
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine release tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "RELEASE_TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          else
+            echo "RELEASE_TAG=${GITHUB_REF_NAME:-${{ github.ref_name }}}" >> $GITHUB_ENV
+          fi
+
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-macos-latest
+          path: artifacts/macos
+
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-windows-latest
+          path: artifacts/windows
+
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-ubuntu-latest
+          path: artifacts/linux
+
+      - name: Show downloaded files
+        run: |
+          ls -la artifacts || true
+          ls -la artifacts/macos || true
+          ls -la artifacts/windows || true
+          ls -la artifacts/linux || true
+      - name: Create GitHub Release and upload artifacts
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.RELEASE_TAG }}
+          name: Release ${{ env.RELEASE_TAG }}
+          files: |
+            artifacts/macos/**
+            artifacts/windows/**
+            artifacts/linux/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
