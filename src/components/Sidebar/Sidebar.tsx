@@ -25,6 +25,10 @@ const Sidebar = () => {
     useEffect(() => {
         setDecks(MOCK_DECKS);
     }, []);
+    const handleOpenFile = async () => {
+        const path = await window.electronAPI.openFile();
+        console.log(path);
+    }
 
     return (
         <aside
@@ -113,6 +117,7 @@ const Sidebar = () => {
 
             <div className="border-t border-secondary/20 py-1">
                 <button
+                    onClick={handleOpenFile}
                     title={!sidebarVisible ? "Import Deck" : undefined}
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 font-ui text-sm transition-colors text-paper/40 hover:text-paper hover:bg-secondary/10"
                     style={{

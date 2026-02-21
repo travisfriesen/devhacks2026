@@ -31,10 +31,13 @@ import "katex/dist/katex.min.css";
 import App from "./App";
 import { createRoot } from "react-dom/client";
 import { useAppStore } from "./store/useAppStore";
+import { contextBridge } from "electron";
 
-window.electronAPI.onNavView((view) => {
-    useAppStore.getState().setNavView(view);
-});
+// contextBridge.executeInMainWorld()
+//
+// window.electronAPI.onNavView((view) => {
+//     useAppStore.getState().setNavView(view);
+// });
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
