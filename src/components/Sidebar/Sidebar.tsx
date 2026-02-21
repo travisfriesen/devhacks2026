@@ -254,7 +254,7 @@ const Sidebar = () => {
                                                 style={{
                                                     color:
                                                         isActiveStudy ||
-                                                        isEditing
+                                                            isEditing
                                                             ? "var(--color-paper)"
                                                             : "rgba(255,253,247,0.55)",
                                                 }}>
@@ -359,10 +359,10 @@ const Sidebar = () => {
                                         deck.cards.map((card, i) => {
                                             const label = card.question
                                                 ? card.question
-                                                      .replace(/[#*`$\\]/g, "")
-                                                      .trim()
-                                                      .slice(0, 32) ||
-                                                  `Card ${i + 1}`
+                                                    .replace(/[#*`$\\]/g, "")
+                                                    .trim()
+                                                    .slice(0, 32) ||
+                                                `Card ${i + 1}`
                                                 : `Card ${i + 1}`;
                                             const isActiveCard =
                                                 navView === "editor" &&
