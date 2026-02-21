@@ -257,10 +257,14 @@ app.whenReady().then(() => {
         if (canceled || filePaths.length === 0) return null;
         const deck = parseYaml(filePaths[0]);
         if (!deck) return null;
-        createDeck(deck.deckId, deck);
-        createCards(deck.cards, deck.deckId);
-        const cards = retrieveCards(deck.deckId);
-        return { ...deck, cards };
+        // Always assign a fresh ID to avoid UNIQUE constraint failures
+        // when the same YAML has been imported before.
+        const freshId = crypto.randomUUID();
+        const importedDeck = { ...deck, deckId: freshId, cards: deck.cards.map(c => ({ ...c, deckId: freshId })) };
+        createDeck(importedDeck.deckId, importedDeck);
+        createCards(importedDeck.cards, importedDeck.deckId);
+        const cards = retrieveCards(importedDeck.deckId);
+        return { ...importedDeck, cards };
     });
 
     ipcMain.handle("db:searchByKeyword", async (_event, keyword: string) => {

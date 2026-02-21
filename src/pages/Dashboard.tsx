@@ -29,7 +29,8 @@ const Dashboard = () => {
     const handleOpenFile = async () => {
         const deck = await window.electronAPI.importDeck();
         if (deck) {
-            loadDecksFromDB();
+            await loadDecksFromDB();
+            openEditor(deck.deckId, deck.filepath);
         }
     };
 
@@ -95,7 +96,7 @@ const Dashboard = () => {
                 </section>
                 <section className="flex items-center gap-3">
                     <button
-                        onClick={createDeck}
+                        onClick={() => createDeck()}
                         className="flex items-center gap-2 font-ui text-sm px-5 py-2.5 rounded-lg text-paper transition-all"
                         style={{ backgroundColor: "var(--color-secondary)" }}>
                         <Plus className="w-4 h-4" />

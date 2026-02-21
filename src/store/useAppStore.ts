@@ -11,11 +11,20 @@ function dateReviver(_key: string, value: unknown): unknown {
         return new Date(value);
     return value;
 }
+const VALID_EDITOR_PREFS = new Set(["System Default Editor", "Web Editor"]);
+
 const dateAwareStorage = {
     getItem: (name: string): StorageValue<Partial<AppState>> | null => {
         const str = localStorage.getItem(name);
         if (!str) return null;
-        return JSON.parse(str, dateReviver) as StorageValue<Partial<AppState>>;
+        const parsed = JSON.parse(str, dateReviver) as StorageValue<Partial<AppState>>;
+        // Migrate any stale / garbage editorPreference value that may have been
+        // persisted by an older version of the app.
+        const pref = (parsed as any)?.state?.editorPreference;
+        if (pref !== undefined && !VALID_EDITOR_PREFS.has(pref)) {
+            (parsed as any).state.editorPreference = "System Default Editor";
+        }
+        return parsed;
     },
     setItem: (name: string, value: StorageValue<Partial<AppState>>) => {
         localStorage.setItem(name, JSON.stringify(value));
@@ -40,7 +49,7 @@ export interface ITab {
 }
 
 interface AppState {
-    loadDecksFromDB: () => void;
+    loadDecksFromDB: () => Promise<void>;
 
     navView: NavView;
     setNavView: (view: NavView) => void;
@@ -73,7 +82,7 @@ interface AppState {
     editingDeckId: string | null;
     editingCardId: string | null;
     openEditor: (deckId: string, deckFilepath: string) => void;
-    createDeck: (name?: string) => void;
+    createDeck: (name?: string) => Promise<void>;
     renameDeck: (deckId: string, newName: string) => void;
     removeDeck: (deckId: string) => void;
     updateDeckFilepath: (deckId: string, filepath: string) => void;
@@ -98,7 +107,7 @@ export const useAppStore = create<AppState>()(
     persist(
         (set, get) => ({
             loadDecksFromDB: () => {
-                window.electronAPI
+                return window.electronAPI
                     .getDecks()
                     .then((decks) => set({ decks }))
                     .catch((err) =>
@@ -143,7 +152,7 @@ export const useAppStore = create<AppState>()(
 
             editingDeckId: null,
             openEditor: (deckId, deckFilepath) => {
-                if (get().editorPreference === "Web Editor") {
+                if (get().editorPreference === "Web Editor" || !deckFilepath) {
                     set({ navView: "editor", editingDeckId: deckId });
                 } else {
                     console.log("open editor for", deckFilepath);
@@ -151,14 +160,21 @@ export const useAppStore = create<AppState>()(
                 }
             },
 
-            createDeck: (name) => {
-                const deckId = crypto.randomUUID();
+            createDeck: async (name) => {
                 const deckName = name?.trim() || "New Deck";
+
+                // Ask for a save location before creating anything.
+                const filepath = await window.electronAPI.saveFileDialog(
+                    `${deckName}.yaml`,
+                );
+                if (!filepath) return; // user cancelled
+
+                const deckId = crypto.randomUUID();
                 const now = new Date();
                 const newDeck: IDeck = {
                     deckId,
                     deckName,
-                    filepath: "",
+                    filepath,
                     lastUpdated: now,
                     created: now,
                     lastUtilized: now,
@@ -167,10 +183,15 @@ export const useAppStore = create<AppState>()(
                     cards: [],
                 };
                 set((state) => ({ decks: [...state.decks, newDeck] }));
-                window.electronAPI
-                    .createDeck(deckId, deckName, "")
+                await window.electronAPI
+                    .createDeck(deckId, deckName, filepath)
                     .catch(console.error);
-                get().openEditor(deckId);
+                // Write an initial empty YAML file to disk immediately.
+                const { deckToYaml } = await import("@/utils/deckToYaml");
+                await window.electronAPI
+                    .saveFile(filepath, deckToYaml(newDeck))
+                    .catch(console.error);
+                get().openEditor(deckId, filepath);
             },
 
             renameDeck: (deckId, newName) => {
@@ -518,7 +539,7 @@ export const useAppStore = create<AppState>()(
                     return { displayFont: font };
                 }),
 
-            editorPreference: '"System Default Editor", Web Editor',
+            editorPreference: "System Default Editor",
             setEditorPreference: (pref) =>
                 set(() => {
                     return { editorPreference: pref };

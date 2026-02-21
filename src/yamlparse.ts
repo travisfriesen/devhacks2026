@@ -13,6 +13,8 @@ export function parseYaml(yamlPath: string) : IDeck | undefined{
 
         let randomUUID = crypto.randomUUID();
 
+        const deckId = myData['deckId'] || randomUUID;
+
         for (var i = 0; i < myData['cards'].length; i++) {
             let curr = myData['cards'][i];
 
@@ -24,25 +26,25 @@ export function parseYaml(yamlPath: string) : IDeck | undefined{
                 throw new Error("Card #" + i + ", with question: " + curr['question'] + " is missing an answer.")
             }
             let card: ICard = {
-                deckId: curr['deckId'] || randomUUID,
-                cardId: curr['cardId'] || i+1,
+                deckId: deckId,
+                cardId: curr['cardId'] ? String(curr['cardId']) : `${deckId}-${i}`,
                 question: curr['question'],
                 answer: curr['answer'],
-                laters: curr['laters'],
-                dueDate: curr['dueDate'],
+                laters: curr['laters'] ?? 0,
+                dueDate: curr['dueDate'] ? new Date(curr['dueDate']) : new Date(),
             }
             cardLists.push(card)
         }
 
         let newDeck: IDeck = {
-            deckId: myData['deckId'] || randomUUID,
-            deckName: myData['name'] || myData['deckName'], // Fallback if user provides name or deckName
+            deckId: deckId,
+            deckName: myData['name'] || myData['deckName'] || path.basename(yamlPath, '.yaml'),
             filepath: myData['filepath'] || path.resolve(yamlPath),
-            lastUpdated: myData['lastUpdated'],
-            created: myData['created'],
-            lastUtilized: myData['lastUtilized'],
-            uses: myData['uses'],
-            streak: myData['streak'],
+            lastUpdated: myData['lastUpdated'] ? new Date(myData['lastUpdated']) : new Date(),
+            created: myData['created'] ? new Date(myData['created']) : new Date(),
+            lastUtilized: myData['lastUtilized'] ? new Date(myData['lastUtilized']) : new Date(),
+            uses: myData['uses'] ?? 0,
+            streak: myData['streak'] ?? 0,
             cards: cardLists,
         };
         return newDeck;
