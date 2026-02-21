@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
+  "license": "MIT",
   "private": true,
   "engines": {
     "node": "25.6.0"
