@@ -72,6 +72,7 @@ interface AppState {
 
     editingDeckId: string | null;
     openEditor: (deckId: string) => void;
+    createDeck: () => void;
     updateCard: (deckId: string, card: ICard) => void;
     addCard: (deckId: string, card: ICard) => void;
     deleteCard: (deckId: string, cardId: string) => void;
@@ -136,6 +137,24 @@ export const useAppStore = create<AppState>()(
             editingDeckId: null,
             openEditor: (deckId) =>
                 set({ navView: "editor", editingDeckId: deckId }),
+
+            createDeck: () => {
+                const deckId = crypto.randomUUID();
+                const now = new Date();
+                const newDeck: IDeck = {
+                    deckId,
+                    deckName: "New Deck",
+                    filepath: "",
+                    lastUpdated: now,
+                    created: now,
+                    lastUtilized: now,
+                    uses: 0,
+                    streak: 0,
+                    cards: [],
+                };
+                set((state) => ({ decks: [...state.decks, newDeck] }));
+                get().openEditor(deckId);
+            },
 
             updateCard: (deckId, card) => {
                 set((state) => ({
