@@ -1,4 +1,3 @@
-import {TrendingUp, Calendar, Flame, X} from "lucide-react";
 import React, { useState } from "react";
 import {
     Search as SearchIcon,
