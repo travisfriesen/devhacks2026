@@ -4,6 +4,30 @@ import { getDatabase } from "./database";
 // @ts-expect-error aaaaHHHH
 let db: Database | undefined;
 
+function fixDeckType(deck: IDeck): IDeck {
+    return {
+        deckId: deck.deckId as string,
+        deckName: deck.deckName as string,
+        filepath: deck.filepath as string,
+        lastUpdated: new Date(deck.lastUpdated),
+        lastUtilized: new Date(deck.lastUtilized),
+        created: new Date(deck.lastUtilized),
+        uses: deck.uses as number,
+        streak: deck.streak as number,
+        cards: []
+    };
+}
+
+function fixDeckTypeArray(deck: IDeck[]): IDeck[] {
+    let newCards: IDeck[] = [];
+
+    for (const key in deck) {
+        newCards.push(fixDeckType(deck[key]));
+    }
+
+    return newCards;
+}
+
 /**
  * Retrieves a deck from the database.
  * Returns null if the deck does not exist.
@@ -16,7 +40,8 @@ export function retrieveDeck(deckId: string): IDeck {
 
     const statement = db.prepare(`SELECT * FROM decks WHERE deckId = ?`);
 
-    return statement.get(deckId);
+    const output = statement.get(deckId);
+    return fixDeckType(output);
 }
 
 /**
@@ -30,7 +55,8 @@ export function retrieveDecks(): IDeck[] {
 
     const statement = db.prepare(`SELECT * FROM decks`);
 
-    return statement.all();
+    const output = statement.all();
+    return fixDeckTypeArray(output);
 }
 
 /**

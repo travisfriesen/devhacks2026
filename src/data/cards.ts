@@ -1,9 +1,30 @@
-import { ICard } from "../types/types";
+import {ICard} from "../types/types";
 import Database from "better-sqlite3";
 import { getDatabase } from "./database";
 
 // @ts-expect-error just let it be its a typescript thing for now
 let db: Database | undefined;
+
+function fixCardType(card: ICard): ICard {
+    return {
+        cardId: card.cardId as string,
+        deckId: card.deckId as string,
+        question: card.question as string,
+        answer: card.answer as string,
+        laters: card.laters as number,
+        dueDate: new Date(card.dueDate)
+    };
+}
+
+function fixCardTypeArray(card: ICard[]): ICard[] {
+    let newCards: ICard[] = [];
+
+    for (const key in card) {
+        newCards.push(fixCardType(card[key]));
+    }
+
+    return newCards;
+}
 
 /**
  * Gets a card from the database.
@@ -20,7 +41,8 @@ export function retrieveCard(cardId: string, deckId: string): ICard {
         `SELECT * FROM cards WHERE cardId = ? AND deckId = ?`,
     );
 
-    return statement.get(cardId, deckId);
+    const output = statement.get(cardId, deckId);
+    return fixCardType(output);
 }
 
 /**
@@ -35,7 +57,8 @@ export function retrieveCards(deckId: string): ICard[] {
 
     const statement = db.prepare(`SELECT * FROM cards WHERE deckId = ?`);
 
-    return statement.all(deckId);
+    const output = statement.get(deckId);
+    return fixCardTypeArray(output);
 }
 
 /**
@@ -49,7 +72,8 @@ export function retrieveAllCards(): ICard[] {
 
     const statement = db.prepare(`SELECT * FROM cards`);
 
-    return statement.all();
+    const output = statement.get();
+    return fixCardTypeArray(output);
 }
 
 /**
