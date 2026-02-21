@@ -40,6 +40,8 @@ declare global {
             searchByKeyword: (keyword: string) => Promise<[IDeck[], ICard[]]>;
             searchDecks: (keyword: string) => Promise<IDeck[]>;
             searchCards: (keyword: string) => Promise<ICard[]>;
+
+            openEditor: (filepath: string) => Promise<void>;
         };
     }
 }

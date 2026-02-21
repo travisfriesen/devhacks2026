@@ -71,8 +71,8 @@ interface AppState {
     incrementReviewed: () => void;
 
     editingDeckId: string | null;
-    openEditor: (deckId: string) => void;
     createDeck: () => void;
+    openEditor: (deckId: string, deckFilepath: string) => void;
     updateCard: (deckId: string, card: ICard) => void;
     addCard: (deckId: string, card: ICard) => void;
     deleteCard: (deckId: string, cardId: string) => void;
@@ -85,6 +85,9 @@ interface AppState {
     setUiFont: (font: string) => void;
     displayFont: string;
     setDisplayFont: (font: string) => void;
+
+    editorPreference: string;
+    setEditorPreference: (pref: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -135,8 +138,15 @@ export const useAppStore = create<AppState>()(
                 }),
 
             editingDeckId: null,
-            openEditor: (deckId) =>
-                set({ navView: "editor", editingDeckId: deckId }),
+            openEditor: (deckId, deckFilepath) => {
+                if (get().editorPreference === "Web Editor") {
+                    console.log("open editor for", deckId);
+                    set({ navView: "editor", editingDeckId: deckId });
+                } else {
+                    console.log("open editor for", deckFilepath);
+                    window.electronAPI.openEditor(deckFilepath);
+                }
+            },
 
             createDeck: () => {
                 const deckId = crypto.randomUUID();
@@ -428,6 +438,12 @@ export const useAppStore = create<AppState>()(
                     });
                     return { displayFont: font };
                 }),
+
+            editorPreference: '"System Default Editor", Web Editor',
+            setEditorPreference: (pref) =>
+                set(() => {
+                    return { editorPreference: pref };
+                }),
         }),
         {
             name: "devhacks-store",
@@ -442,6 +458,7 @@ export const useAppStore = create<AppState>()(
                 fontSize: state.fontSize,
                 uiFont: state.uiFont,
                 displayFont: state.displayFont,
+                editorPreference: state.editorPreference,
             }),
         },
     ),
