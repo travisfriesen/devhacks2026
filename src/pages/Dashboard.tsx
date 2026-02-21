@@ -2,6 +2,7 @@ import React from "react";
 import { TrendingUp, Calendar, Flame } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { HEATMAP } from "@/global/constants";
+import InspirationalQuotes from '@/components/InspirationalQuotes/InspirationalQuotes';
 
 function heatColor(intensity: number): string {
     if (intensity === 0) return "bg-transparent";
@@ -28,6 +29,9 @@ const Dashboard = () => {
     return (
         <div className="flex flex-col flex-1 h-full overflow-y-auto p-8 items-center justify-center">
             <div className="max-w-4xl mx-auto space-y-10">
+                <section>
+                    <InspirationalQuotes />
+                </section>
                 <section>
                     <p className="font-ui text-xs uppercase tracking-widest text-primary/35 mb-3">
                         Activity — Last 6 Months
