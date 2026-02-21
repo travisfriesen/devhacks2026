@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import TabBar from "@/components/TabBar/TabBar";
 import Sidebar from "@/components/Sidebar/Sidebar";
@@ -6,29 +6,27 @@ import Sidebar from "@/components/Sidebar/Sidebar";
 import Header from "@/components/Header/Header";
 import Dashboard from "@/pages/Dashboard";
 import Deck from "@/pages/Deck";
+import Settings from "@/pages/Settings";
 
 import { useAppStore } from "@/store/useAppStore";
-import Editor from "@/pages/Editor";
+import { applyTheme } from "@/utils/applyTheme";
+import Search from "./pages/Search";
+import EditorPage from "@/pages/EditorPage";
 
 const App = () => {
-    const { activeTabId, navView } = useAppStore();
+    const { activeTabId, navView, themePreset, fontSize, uiFont, displayFont } = useAppStore();
+
+    // Restore persisted theme settings on first mount
+    useEffect(() => {
+        applyTheme({ themePreset, fontSize, uiFont, displayFont });
+    }, []);
 
     const renderMain = () => {
+        if (navView === "editor") return <EditorPage />;
         if (activeTabId) return <Deck />;
         if (navView === "decks") return <Dashboard />;
-        if (navView === "stats")
-            return (
-                <div className="p-8 font-ui text-primary/60">
-                    Stats — coming soon
-                </div>
-            );
-        if (navView === "settings")
-            return (
-                <div className="p-8 font-ui text-primary/60">
-                    {/*Settings — coming soon*/}
-                    <Editor />
-                </div>
-            );
+        if (navView === "search") return <Search />;
+        if (navView === "settings") return <Settings />;
     };
 
     return (
