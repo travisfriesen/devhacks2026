@@ -144,7 +144,6 @@ export const useAppStore = create<AppState>()(
             editingDeckId: null,
             openEditor: (deckId, deckFilepath) => {
                 if (get().editorPreference === "Web Editor") {
-                    console.log("open editor for", deckId);
                     set({ navView: "editor", editingDeckId: deckId });
                 } else {
                     console.log("open editor for", deckFilepath);
@@ -168,7 +167,9 @@ export const useAppStore = create<AppState>()(
                     cards: [],
                 };
                 set((state) => ({ decks: [...state.decks, newDeck] }));
-                window.electronAPI.createDeck(deckId, deckName, "").catch(console.error);
+                window.electronAPI
+                    .createDeck(deckId, deckName, "")
+                    .catch(console.error);
                 get().openEditor(deckId);
             },
 
@@ -179,17 +180,32 @@ export const useAppStore = create<AppState>()(
                         d.deckId === deckId ? { ...d, deckName: newName } : d,
                     ),
                 }));
-                if (deck) window.electronAPI.updateDeck({ ...deck, deckName: newName }, "name", newName).catch(console.error);
+                if (deck)
+                    window.electronAPI
+                        .updateDeck(
+                            { ...deck, deckName: newName },
+                            "name",
+                            newName,
+                        )
+                        .catch(console.error);
             },
 
             removeDeck: (deckId) => {
-                const tabToClose = get().tabs.find((t) => t.deck.deckId === deckId);
+                const tabToClose = get().tabs.find(
+                    (t) => t.deck.deckId === deckId,
+                );
                 if (tabToClose) get().closeTab(tabToClose.tabId);
                 set((state) => ({
                     decks: state.decks.filter((d) => d.deckId !== deckId),
-                    pinnedDeckIds: state.pinnedDeckIds.filter((id) => id !== deckId),
+                    pinnedDeckIds: state.pinnedDeckIds.filter(
+                        (id) => id !== deckId,
+                    ),
                     ...(state.editingDeckId === deckId
-                        ? { editingDeckId: null, editingCardId: null, navView: "decks" as NavView }
+                        ? {
+                              editingDeckId: null,
+                              editingCardId: null,
+                              navView: "decks" as NavView,
+                          }
                         : {}),
                 }));
                 window.electronAPI.deleteDeck(deckId).catch(console.error);
@@ -204,7 +220,8 @@ export const useAppStore = create<AppState>()(
             },
 
             updateCard: (deckId, card) => {
-                const patchCard = (c: ICard) => c.cardId === card.cardId ? card : c;
+                const patchCard = (c: ICard) =>
+                    c.cardId === card.cardId ? card : c;
                 set((state) => ({
                     decks: state.decks.map((d) =>
                         d.deckId === deckId
@@ -217,13 +234,20 @@ export const useAppStore = create<AppState>()(
                                   ...tab,
                                   queue: tab.queue.map(patchCard),
                                   history: tab.history.map(patchCard),
-                                  deck: { ...tab.deck, cards: tab.deck.cards.map(patchCard) },
+                                  deck: {
+                                      ...tab.deck,
+                                      cards: tab.deck.cards.map(patchCard),
+                                  },
                               }
                             : tab,
                     ),
                 }));
-                window.electronAPI.updateCard(card, "question", card.question).catch(console.error);
-                window.electronAPI.updateCard(card, "answer", card.answer).catch(console.error);
+                window.electronAPI
+                    .updateCard(card, "question", card.question)
+                    .catch(console.error);
+                window.electronAPI
+                    .updateCard(card, "answer", card.answer)
+                    .catch(console.error);
             },
 
             addCard: (deckId, card) => {
@@ -234,7 +258,9 @@ export const useAppStore = create<AppState>()(
                             : d,
                     ),
                 }));
-                window.electronAPI.createCard(card, deckId).catch(console.error);
+                window.electronAPI
+                    .createCard(card, deckId)
+                    .catch(console.error);
             },
 
             deleteCard: (deckId, cardId) => {
@@ -250,7 +276,9 @@ export const useAppStore = create<AppState>()(
                             : d,
                     ),
                 }));
-                window.electronAPI.deleteCard(cardId, deckId).catch(console.error);
+                window.electronAPI
+                    .deleteCard(cardId, deckId)
+                    .catch(console.error);
             },
 
             openTab: (deck) => {
@@ -271,8 +299,12 @@ export const useAppStore = create<AppState>()(
                                 : d,
                         ),
                     }));
-                    window.electronAPI.updateDeck(deck, "uses", deck.uses + 1).catch(console.error);
-                    window.electronAPI.updateDeck(deck, "streak", null).catch(console.error);
+                    window.electronAPI
+                        .updateDeck(deck, "uses", deck.uses + 1)
+                        .catch(console.error);
+                    window.electronAPI
+                        .updateDeck(deck, "streak", null)
+                        .catch(console.error);
                     return;
                 }
 
@@ -298,8 +330,12 @@ export const useAppStore = create<AppState>()(
                             : d,
                     ),
                 }));
-                window.electronAPI.updateDeck(deck, "uses", deck.uses + 1).catch(console.error);
-                window.electronAPI.updateDeck(deck, "streak", null).catch(console.error);
+                window.electronAPI
+                    .updateDeck(deck, "uses", deck.uses + 1)
+                    .catch(console.error);
+                window.electronAPI
+                    .updateDeck(deck, "streak", null)
+                    .catch(console.error);
             },
             closeTab: (tabId) => {
                 set((state) => {
@@ -367,10 +403,7 @@ export const useAppStore = create<AppState>()(
                 const currentTab = get().tabs.find((t) => t.tabId === tabId);
                 if (!currentTab || currentTab.queue.length === 0) return;
                 const [currentCard] = currentTab.queue;
-                const updatedCard = scheduleCard(
-                    currentCard,
-                    rating
-                );
+                const updatedCard = scheduleCard(currentCard, rating);
 
                 set((state) => ({
                     tabs: state.tabs.map((tab) => {
@@ -418,8 +451,12 @@ export const useAppStore = create<AppState>()(
                 }));
 
                 // Persist scheduling data to DB
-                window.electronAPI.updateCard(updatedCard, "dueDate", updatedCard.dueDate).catch(console.error);
-                window.electronAPI.updateCard(updatedCard, "laters", updatedCard.laters).catch(console.error);
+                window.electronAPI
+                    .updateCard(updatedCard, "dueDate", updatedCard.dueDate)
+                    .catch(console.error);
+                window.electronAPI
+                    .updateCard(updatedCard, "laters", updatedCard.laters)
+                    .catch(console.error);
                 get().incrementReviewed();
             },
 

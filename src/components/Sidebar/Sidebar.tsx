@@ -7,7 +7,6 @@ import {
     FolderPlus,
     Flame,
     PanelLeftClose,
-    PanelLeft,
     Plus,
     Star,
     Trash2,
@@ -137,39 +136,51 @@ const Sidebar = () => {
             <div
                 className="flex items-center border-b border-secondary/20 shrink-0"
                 style={{
-                    height: "44px",
-                    padding: sidebarVisible ? "0 0.5rem 0 0.75rem" : "0",
+                    height: "55px",
+                    padding: sidebarVisible ? "0 0.5rem 0 0.5rem" : "0",
                 }}>
                 {sidebarVisible ? (
                     <>
-                        <span className="font-display italic text-xl text-paper/80 tracking-wide flex-1 select-none pl-1 truncate">
-                            gg, get flashed
+                        <button
+                            className="flex items-center shrink-0"
+                            onClick={() => setNavView("decks")}>
+                            <img
+                                className="brightness-150 hover:brightness-200"
+                                src="logo.svg"
+                                alt="Logo"
+                                style={{ height: "40px", width: "75px" }}
+                            />
+                        </button>
+                        <span className="text-white/80 font-serif text-xl text-center leading-relaxed font-semibold flex-1 select-none">
+                            GGC
                         </span>
                         <button
                             onClick={handleStartCreateDeck}
-                            className="p-1.5 text-paper/40 hover:text-paper transition-colors"
+                            className="flex items-center p-1.5 text-paper/40 hover:text-paper transition-colors"
                             title="New Deck">
                             <FolderPlus className="w-4 h-4" />
                         </button>
-                        <span className="font-serif text-2xl text-center leading-relaxed font-semibold" > GGC </span>
                         <button
                             onClick={toggleSidebar}
-                            className="p-1.5 text-paper/40 hover:text-paper transition-colors"
+                            className="flex items-center p-1.5 text-paper/40 hover:text-paper transition-colors"
                             title="Hide sidebar">
                             <PanelLeftClose className="w-4 h-4" />
                         </button>
                     </>
                 ) : (
                     <button
-                        onClick={toggleSidebar}
-                        className="w-full flex items-center justify-center py-3 text-paper/40 hover:text-paper transition-colors"
-                        title="Show sidebar">
-                        <PanelLeft className="w-4 h-4" />
+                        className="w-full flex items-center justify-center"
+                        onClick={toggleSidebar}>
+                        <img
+                            className="brightness-150 hover:brightness-200"
+                            src="logo.svg"
+                            alt="Logo"
+                            style={{ height: "30px", width: "100%" }}
+                        />
                     </button>
                 )}
             </div>
 
-            {/* Deck tree */}
             <ul className="flex-1 py-1 overflow-y-auto">
                 {decks.map((deck) => {
                     const openTab_ = tabs.find(
@@ -183,7 +194,6 @@ const Sidebar = () => {
 
                     return (
                         <li key={deck.deckId}>
-                            {/* Deck row */}
                             <div
                                 className="group flex items-center"
                                 style={{
@@ -244,7 +254,7 @@ const Sidebar = () => {
                                                 style={{
                                                     color:
                                                         isActiveStudy ||
-                                                            isEditing
+                                                        isEditing
                                                             ? "var(--color-paper)"
                                                             : "rgba(255,253,247,0.55)",
                                                 }}>
@@ -261,7 +271,6 @@ const Sidebar = () => {
                                             </button>
                                         )}
 
-                                        {/* Hover actions: pin, add card, delete deck */}
                                         {!isRenaming && (
                                             <div className="shrink-0 flex items-center gap-0.5 pr-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
@@ -314,7 +323,6 @@ const Sidebar = () => {
                                         )}
                                     </>
                                 ) : (
-                                    /* Collapsed: icon only */
                                     <button
                                         onClick={() => openTab(deck)}
                                         title={deck.deckName}
@@ -340,10 +348,7 @@ const Sidebar = () => {
                                             </span>
                                             <button
                                                 onClick={(e) =>
-                                                    handleAddCardToDeck(
-                                                        e,
-                                                        deck,
-                                                    )
+                                                    handleAddCardToDeck(e, deck)
                                                 }
                                                 className="flex items-center gap-1 font-ui text-xs text-paper/40 hover:text-paper transition-colors">
                                                 <Plus className="w-3 h-3" />
@@ -354,13 +359,10 @@ const Sidebar = () => {
                                         deck.cards.map((card, i) => {
                                             const label = card.question
                                                 ? card.question
-                                                    .replace(
-                                                        /[#*`$\\]/g,
-                                                        "",
-                                                    )
-                                                    .trim()
-                                                    .slice(0, 32) ||
-                                                `Card ${i + 1}`
+                                                      .replace(/[#*`$\\]/g, "")
+                                                      .trim()
+                                                      .slice(0, 32) ||
+                                                  `Card ${i + 1}`
                                                 : `Card ${i + 1}`;
                                             const isActiveCard =
                                                 navView === "editor" &&
@@ -371,9 +373,10 @@ const Sidebar = () => {
                                                     key={card.cardId}
                                                     className="group flex items-center"
                                                     style={{
-                                                        backgroundColor: isActiveCard
-                                                            ? "rgba(185,49,79,0.10)"
-                                                            : undefined,
+                                                        backgroundColor:
+                                                            isActiveCard
+                                                                ? "rgba(185,49,79,0.10)"
+                                                                : undefined,
                                                         borderLeft: isActiveCard
                                                             ? "2px solid var(--color-secondary)"
                                                             : "2px solid transparent",
@@ -478,4 +481,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
