@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     BookOpen,
     Flame,
@@ -7,7 +7,7 @@ import {
     FolderOpen,
 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { MOCK_DECKS, BOTTOM_NAV } from '@/global/constants';
+import { MOCK_DECKS, BOTTOM_NAV } from "@/global/constants";
 
 const Sidebar = () => {
     const {
@@ -16,9 +16,15 @@ const Sidebar = () => {
         openTab,
         activeTabId,
         tabs,
+        decks,
         navView,
         setNavView,
+        setDecks,
     } = useAppStore();
+
+    useEffect(() => {
+        setDecks(MOCK_DECKS);
+    }, []);
 
     return (
         <aside
@@ -53,7 +59,7 @@ const Sidebar = () => {
             </div>
 
             <ul className="flex-1 py-1 overflow-y-auto">
-                {MOCK_DECKS.map((deck) => {
+                {decks.map((deck) => {
                     const openTab_ = tabs.find(
                         (tab) => tab.deck.deckId === deck.deckId,
                     );

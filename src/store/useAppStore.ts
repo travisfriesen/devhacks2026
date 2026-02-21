@@ -17,6 +17,9 @@ interface AppState {
     sidebarVisible: boolean;
     toggleSidebar: () => void;
 
+    decks: IDeck[];
+    setDecks: (decks: IDeck[]) => void;
+
     tabs: ITab[];
     activeTabId: string | null; // null will mean that it's a blank state with no deck loaded, so maybe show dashboard here?
     openTab: (deck: IDeck) => void;
@@ -38,6 +41,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     tabs: [],
     activeTabId: null,
+
+    decks: [],
+    setDecks: (decks) => set({ decks }),
 
     openTab: (deck) => {
         const existingTab = get().tabs.find(

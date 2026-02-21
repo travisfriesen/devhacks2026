@@ -123,4 +123,17 @@ const BOTTOM_NAV: { view: NavView; icon: React.ReactNode; label: string }[] = [
     },
 ];
 
-export { MOCK_DECKS, BOTTOM_NAV };
+const HEATMAP = Array.from({ length: 26 }, () =>
+    Array.from({ length: 7 }, () => {
+        // 30% chance of no activity
+        if (Math.random() < 0.3) return 0;
+        // remaining spread low, rarely high
+        const r = Math.random();
+        if (r < 0.5) return Math.random() * 0.25; 
+        if (r < 0.7) return 0.25 + Math.random() * 0.25;
+        if (r < 0.9) return 0.5 + Math.random() * 0.25;
+        return 0.85 + Math.random() * 0.15;
+    }),
+);
+
+export { MOCK_DECKS, BOTTOM_NAV, HEATMAP };
