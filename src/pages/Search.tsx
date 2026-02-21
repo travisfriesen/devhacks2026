@@ -396,8 +396,8 @@ const Search = () => {
                                                             )
                                                         }
                                                         className={`text-left border rounded-xl p-4 bg-paper transition-all cursor-pointer ${isSelected
-                                                                ? "border-secondary/60 ring-2 ring-secondary/25"
-                                                                : "border-primary/10 hover:border-primary/20"
+                                                            ? "border-secondary/60 ring-2 ring-secondary/25"
+                                                            : "border-primary/10 hover:border-primary/20"
                                                             }`}
                                                         style={{
                                                             boxShadow:
@@ -608,8 +608,8 @@ const Search = () => {
                                                 handleDeckClick(s.deckId)
                                             }
                                             className={`flex items-center justify-between py-1.5 px-2 rounded-lg cursor-pointer transition-colors ${selectedDeckId === s.deckId
-                                                    ? "bg-secondary/10"
-                                                    : "hover:bg-primary/[0.04]"
+                                                ? "bg-secondary/10"
+                                                : "hover:bg-primary/[0.04]"
                                                 }`}>
                                             <span className="font-ui text-xs text-primary/70 truncate max-w-[120px]">
                                                 {s.deckName}

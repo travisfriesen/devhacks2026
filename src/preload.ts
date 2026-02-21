@@ -27,7 +27,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
             callback(filepaths),
         );
     },
-
+    openEditor: (filepath: string) => {
+        ipcRenderer.invoke("openEditor", filepath);
+    },
     retrieveCard: (cardId: string, deckId: string) =>
         ipcRenderer.invoke("db:retrieveCard", cardId, deckId),
     retrieveAllCards: () => ipcRenderer.invoke("db:retrieveAllCards"),

@@ -72,7 +72,7 @@ interface AppState {
 
     editingDeckId: string | null;
     editingCardId: string | null;
-    openEditor: (deckId: string, cardId?: string) => void;
+    openEditor: (deckId: string, deckFilepath: string) => void;
     createDeck: (name?: string) => void;
     renameDeck: (deckId: string, newName: string) => void;
     removeDeck: (deckId: string) => void;
@@ -89,6 +89,9 @@ interface AppState {
     setUiFont: (font: string) => void;
     displayFont: string;
     setDisplayFont: (font: string) => void;
+
+    editorPreference: string;
+    setEditorPreference: (pref: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -139,9 +142,15 @@ export const useAppStore = create<AppState>()(
                 }),
 
             editingDeckId: null,
-            editingCardId: null,
-            openEditor: (deckId, cardId) =>
-                set({ navView: "editor", editingDeckId: deckId, editingCardId: cardId ?? null }),
+            openEditor: (deckId, deckFilepath) => {
+                if (get().editorPreference === "Web Editor") {
+                    console.log("open editor for", deckId);
+                    set({ navView: "editor", editingDeckId: deckId });
+                } else {
+                    console.log("open editor for", deckFilepath);
+                    window.electronAPI.openEditor(deckFilepath);
+                }
+            },
 
             createDeck: (name) => {
                 const deckId = crypto.randomUUID();
@@ -358,10 +367,9 @@ export const useAppStore = create<AppState>()(
                 const currentTab = get().tabs.find((t) => t.tabId === tabId);
                 if (!currentTab || currentTab.queue.length === 0) return;
                 const [currentCard] = currentTab.queue;
-                const { updatedCard } = scheduleCard(
+                const updatedCard = scheduleCard(
                     currentCard,
-                    rating,
-                    currentTab.queue,
+                    rating
                 );
 
                 set((state) => ({
@@ -472,6 +480,12 @@ export const useAppStore = create<AppState>()(
                     });
                     return { displayFont: font };
                 }),
+
+            editorPreference: '"System Default Editor", Web Editor',
+            setEditorPreference: (pref) =>
+                set(() => {
+                    return { editorPreference: pref };
+                }),
         }),
         {
             name: "devhacks-store",
@@ -484,6 +498,7 @@ export const useAppStore = create<AppState>()(
                 fontSize: state.fontSize,
                 uiFont: state.uiFont,
                 displayFont: state.displayFont,
+                editorPreference: state.editorPreference,
             }),
         },
     ),

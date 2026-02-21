@@ -1,4 +1,4 @@
-import { app, Menu, BrowserWindow, dialog, ipcMain } from "electron";
+import { shell, app, Menu, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "node:path";
 import fs from "node:fs";
 import started from "electron-squirrel-startup";
@@ -270,6 +270,15 @@ app.whenReady().then(() => {
     });
     ipcMain.handle("db:searchCards", async (_event, keyword: string) => {
         return searchCards(keyword);
+    });
+    ipcMain.handle("openEditor", async (_event, filepath: string) => {
+        shell.openPath(filepath).then((error) => {
+            if (error === "") {
+                console.log("File opened successfully");
+            } else {
+                console.error("Error opening file:", error);
+            }
+        });
     });
 
     createWindow();

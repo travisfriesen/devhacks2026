@@ -151,6 +151,7 @@ const Sidebar = () => {
                             title="New Deck">
                             <FolderPlus className="w-4 h-4" />
                         </button>
+                        <span className="font-serif text-2xl text-center leading-relaxed font-semibold" > GGC </span>
                         <button
                             onClick={toggleSidebar}
                             className="p-1.5 text-paper/40 hover:text-paper transition-colors"
