@@ -48,10 +48,11 @@ const Sidebar = () => {
                         <button
                             className={``}
                         onClick={() => setNavView("decks")}>
-                            <img className={`hover:brightness-200`} src={"logo.png"} alt={"Logo"} style={{
+                            <img className={`hover:brightness-200`} src={"logo.svg"} alt={"Logo"} style={{
                                 maxHeight: "40px"
                             }} />
                         </button>
+                        <span className="font-serif text-2xl text-center leading-relaxed font-semibold" > GGC </span>
                         <button
                             onClick={toggleSidebar}
                             className="p-1.5 text-paper/40 hover:text-paper transition-colors"
@@ -63,7 +64,7 @@ const Sidebar = () => {
                     <button
                         className={``}
                         onClick={toggleSidebar}>
-                        <img className={`hover:brightness-200`} src={"logo.png"} alt={"Logo"} style={{
+                        <img className={`hover:brightness-200`} src={"logo.svg"} alt={"Logo"} style={{
                             maxHeight: "40px"
                         }} />
                     </button>
