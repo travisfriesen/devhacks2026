@@ -8,7 +8,7 @@ import {
     Star,
 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { MOCK_DECKS, BOTTOM_NAV } from "@/global/constants";
+import { BOTTOM_NAV } from "@/global/constants";
 
 const Sidebar = () => {
     const {
@@ -20,13 +20,13 @@ const Sidebar = () => {
         decks,
         navView,
         setNavView,
-        setDecks,
         pinnedDeckIds,
         togglePinDeck,
+        loadDecksFromDB,
     } = useAppStore();
 
     useEffect(() => {
-        if (decks.length === 0) setDecks(MOCK_DECKS);
+        loadDecksFromDB();
     }, []);
     const handleOpenFile = async () => {
         const path = await window.electronAPI.openFile();

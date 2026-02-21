@@ -1,6 +1,6 @@
 import {ICard} from "../types/types";
 import Database from "better-sqlite3";
-import {getDatabase} from "@/data/database";
+import { getDatabase } from "./database";
 
 // @ts-expect-error just let it be its a typescript thing for now
 let db: Database | undefined;
@@ -57,7 +57,7 @@ export function retrieveCards(deckId: string): ICard[] {
 
     const statement = db.prepare(`SELECT * FROM cards WHERE deckId = ?`);
 
-    const output = statement.get(deckId);
+    const output = statement.all(deckId);
     return fixCardTypeArray(output);
 }
 
@@ -72,7 +72,7 @@ export function retrieveAllCards(): ICard[] {
 
     const statement = db.prepare(`SELECT * FROM cards`);
 
-    const output = statement.get();
+    const output = statement.all();
     return fixCardTypeArray(output);
 }
 
@@ -130,7 +130,7 @@ export function deleteCard(cardId: string, deckId: string): boolean {
         `DELETE FROM cards WHERE cardId = ? AND deckId = ?`,
     );
 
-    return statement.get(cardId, deckId);
+    return statement.run(cardId, deckId).changes > 0;
 }
 
 /**
@@ -145,7 +145,7 @@ export function deleteAllCards(deckId: string): boolean {
 
     const statement = db.prepare(`DELETE FROM cards WHERE deckId = ?`);
 
-    return statement.run(deckId);
+    return statement.run(deckId).changes > 0;
 }
 
 /**
@@ -162,7 +162,7 @@ export function updateCardQuestion(card: ICard, question: string): boolean {
         `UPDATE cards SET question = ? WHERE cardId = ? AND deckId = ?`,
     );
 
-    return statement.run(question, card.cardId, card.deckId);
+    return statement.run(question, card.cardId, card.deckId).changes > 0;
 }
 
 /**
@@ -179,7 +179,7 @@ export function updateCardAnswer(card: ICard, answer: string): boolean {
         `UPDATE cards SET answer = ? WHERE cardId = ? AND deckId = ?`,
     );
 
-    return statement.run(answer, card.cardId, card.deckId);
+    return statement.run(answer, card.cardId, card.deckId).changes > 0;
 }
 
 /**
@@ -196,7 +196,7 @@ export function updateCardLaters(card: ICard, later: number): boolean {
         `UPDATE cards SET laters = ? WHERE cardId = ? AND deckId = ?`,
     );
 
-    return statement.run(later, card.cardId, card.deckId);
+    return statement.run(later, card.cardId, card.deckId).changes > 0;
 }
 
 /**
@@ -213,5 +213,6 @@ export function updateCardDueDate(card: ICard, dueDate: Date): boolean {
         `UPDATE cards SET dueDate = ? WHERE cardId = ? AND deckId = ?`,
     );
 
-    return statement.run(dueDate, card.cardId, card.deckId);
+    const dueDateStr = dueDate instanceof Date ? dueDate.toISOString().slice(0, 10) : String(dueDate);
+    return statement.run(dueDateStr, card.cardId, card.deckId).changes > 0;
 }

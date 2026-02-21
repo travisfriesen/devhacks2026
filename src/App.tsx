@@ -12,12 +12,24 @@ import { useAppStore } from "@/store/useAppStore";
 import { applyTheme } from "@/utils/applyTheme";
 import Search from "./pages/Search";
 import EditorPage from "@/pages/EditorPage";
+import { retrieveAllCards } from "./data/cards";
 
 const App = () => {
-    const { activeTabId, navView, themePreset, fontSize, uiFont, displayFont } = useAppStore();
+    const {
+        decks,
+        activeTabId,
+        navView,
+        themePreset,
+        fontSize,
+        uiFont,
+        displayFont,
+        loadDecksFromDB,
+    } = useAppStore();
 
     // Restore persisted theme settings on first mount
     useEffect(() => {
+        loadDecksFromDB();
+
         applyTheme({ themePreset, fontSize, uiFont, displayFont });
     }, []);
 

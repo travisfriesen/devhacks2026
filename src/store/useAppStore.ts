@@ -5,9 +5,10 @@ import { RecallRating, scheduleCard } from "@/utils/scheduler";
 import { FontSize, applyTheme } from "@/utils/applyTheme";
 
 // Custom storage that revives ISO date strings back into Date objects on read.
-const isoDateRe = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/; // holy chatgpt generated this 
+const isoDateRe = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/; // holy chatgpt generated this
 function dateReviver(_key: string, value: unknown): unknown {
-    if (typeof value === "string" && isoDateRe.test(value)) return new Date(value);
+    if (typeof value === "string" && isoDateRe.test(value))
+        return new Date(value);
     return value;
 }
 const dateAwareStorage = {
@@ -39,6 +40,8 @@ export interface ITab {
 }
 
 interface AppState {
+    loadDecksFromDB: () => void;
+
     navView: NavView;
     setNavView: (view: NavView) => void;
 
@@ -86,246 +89,326 @@ interface AppState {
 export const useAppStore = create<AppState>()(
     persist(
         (set, get) => ({
-    navView: "decks",
-    setNavView: (view) => set({ navView: view, activeTabId: null }),
+            loadDecksFromDB: () => {
+                window.electronAPI
+                    .getDecks()
+                    .then((decks) => set({ decks }))
+                    .catch((err) =>
+                        console.error("Failed to load decks from DB", err),
+                    );
+            },
 
-    sidebarVisible: true,
-    toggleSidebar: () =>
-        set((state) => ({ sidebarVisible: !state.sidebarVisible })),
-
-    tabs: [],
-    activeTabId: null,
-
-    decks: [],
-    setDecks: (decks) => set({ decks }),
-
-    pinnedDeckIds: [],
-    togglePinDeck: (deckId) =>
-        set((state) => ({
-            pinnedDeckIds: state.pinnedDeckIds.includes(deckId)
-                ? state.pinnedDeckIds.filter((id) => id !== deckId)
-                : [...state.pinnedDeckIds, deckId],
-        })),
-
-    dailyGoal: 20,
-    setDailyGoal: (n) => set({ dailyGoal: n }),
-    reviewHistory: {},
-    incrementReviewed: () =>
-        set((state) => {
-            const today = todayStr();
-            return {
-                reviewHistory: {
-                    ...state.reviewHistory,
-                    [today]: (state.reviewHistory[today] ?? 0) + 1,
-                },
-            };
-        }),
-
-    editingDeckId: null,
-    openEditor: (deckId) => set({ navView: "editor", editingDeckId: deckId }),
-
-    updateCard: (deckId, card) =>
-        set((state) => ({
-            decks: state.decks.map((d) =>
-                d.deckId === deckId
-                    ? { ...d, cards: d.cards.map((c) => (c.cardId === card.cardId ? card : c)) }
-                    : d,
-            ),
-        })),
-
-    addCard: (deckId, card) =>
-        set((state) => ({
-            decks: state.decks.map((d) =>
-                d.deckId === deckId ? { ...d, cards: [...d.cards, card] } : d,
-            ),
-        })),
-
-    deleteCard: (deckId, cardId) =>
-        set((state) => ({
-            decks: state.decks.map((d) =>
-                d.deckId === deckId
-                    ? { ...d, cards: d.cards.filter((c) => c.cardId !== cardId) }
-                    : d,
-            ),
-        })),
-
-    openTab: (deck) => {
-        const now = new Date();
-        const updatedDeck = { ...deck, lastUtilized: now };
-
-        const existingTab = get().tabs.find(
-            (tab) => tab.deck.deckId === deck.deckId,
-        );
-
-        if (existingTab) {
-            // if the tab is already open, just switch to it instead of opening a new one
-            set((state) => ({
-                activeTabId: existingTab.tabId,
-                decks: state.decks.map((d) =>
-                    d.deckId === deck.deckId ? { ...d, lastUtilized: now } : d,
-                ),
-            }));
-            return;
-        }
-
-        const tabId = `tab-${deck.deckId}-${Date.now()}`;
-        const queue = [...deck.cards];
-        const newTab: ITab = {
-            tabId,
-            deck: updatedDeck,
-            queue,
-            history: [],
-            totalCards: queue.length,
-            completed: 0,
-            flipped: false,
-        };
-
-        set((state) => ({
-            tabs: [...state.tabs, newTab],
-            activeTabId: tabId,
             navView: "decks",
-            decks: state.decks.map((d) =>
-                d.deckId === deck.deckId ? { ...d, lastUtilized: now } : d,
-            ),
-        }));
-    },
-    closeTab: (tabId) => {
-        set((state) => {
-            const index = state.tabs.findIndex((tab) => tab.tabId === tabId);
-            const newTabs = state.tabs.filter((tab) => tab.tabId !== tabId);
-            let newActiveId = state.activeTabId;
+            setNavView: (view) => set({ navView: view, activeTabId: null }),
 
-            if (state.activeTabId === tabId) {
-                if (newTabs.length === 0) {
-                    newActiveId = null;
-                } else if (index === 0) {
-                    newActiveId = newTabs[0].tabId;
-                } else {
-                    newActiveId = newTabs[index - 1].tabId;
+            sidebarVisible: true,
+            toggleSidebar: () =>
+                set((state) => ({ sidebarVisible: !state.sidebarVisible })),
+
+            tabs: [],
+            activeTabId: null,
+
+            decks: [],
+            setDecks: (decks) => set({ decks }),
+
+            pinnedDeckIds: [],
+            togglePinDeck: (deckId) =>
+                set((state) => ({
+                    pinnedDeckIds: state.pinnedDeckIds.includes(deckId)
+                        ? state.pinnedDeckIds.filter((id) => id !== deckId)
+                        : [...state.pinnedDeckIds, deckId],
+                })),
+
+            dailyGoal: 20,
+            setDailyGoal: (n) => set({ dailyGoal: n }),
+            reviewHistory: {},
+            incrementReviewed: () =>
+                set((state) => {
+                    const today = todayStr();
+                    return {
+                        reviewHistory: {
+                            ...state.reviewHistory,
+                            [today]: (state.reviewHistory[today] ?? 0) + 1,
+                        },
+                    };
+                }),
+
+            editingDeckId: null,
+            openEditor: (deckId) =>
+                set({ navView: "editor", editingDeckId: deckId }),
+
+            updateCard: (deckId, card) => {
+                set((state) => ({
+                    decks: state.decks.map((d) =>
+                        d.deckId === deckId
+                            ? {
+                                  ...d,
+                                  cards: d.cards.map((c) =>
+                                      c.cardId === card.cardId ? card : c,
+                                  ),
+                              }
+                            : d,
+                    ),
+                }));
+                window.electronAPI.updateCard(card, "question", card.question).catch(console.error);
+                window.electronAPI.updateCard(card, "answer", card.answer).catch(console.error);
+            },
+
+            addCard: (deckId, card) => {
+                set((state) => ({
+                    decks: state.decks.map((d) =>
+                        d.deckId === deckId
+                            ? { ...d, cards: [...d.cards, card] }
+                            : d,
+                    ),
+                }));
+                window.electronAPI.createCard(card, deckId).catch(console.error);
+            },
+
+            deleteCard: (deckId, cardId) => {
+                set((state) => ({
+                    decks: state.decks.map((d) =>
+                        d.deckId === deckId
+                            ? {
+                                  ...d,
+                                  cards: d.cards.filter(
+                                      (c) => c.cardId !== cardId,
+                                  ),
+                              }
+                            : d,
+                    ),
+                }));
+                window.electronAPI.deleteCard(cardId, deckId).catch(console.error);
+            },
+
+            openTab: (deck) => {
+                const now = new Date();
+                const updatedDeck = { ...deck, lastUtilized: now };
+
+                const existingTab = get().tabs.find(
+                    (tab) => tab.deck.deckId === deck.deckId,
+                );
+
+                if (existingTab) {
+                    // if the tab is already open, just switch to it instead of opening a new one
+                    set((state) => ({
+                        activeTabId: existingTab.tabId,
+                        decks: state.decks.map((d) =>
+                            d.deckId === deck.deckId
+                                ? { ...d, lastUtilized: now, uses: d.uses + 1 }
+                                : d,
+                        ),
+                    }));
+                    window.electronAPI.updateDeck(deck, "uses", deck.uses + 1).catch(console.error);
+                    window.electronAPI.updateDeck(deck, "streak", null).catch(console.error);
+                    return;
                 }
-            }
 
-            return { tabs: newTabs, activeTabId: newActiveId };
-        });
-    },
-    setActiveTab: (tabId) => set({ activeTabId: tabId }),
-
-    nextCard: (tabId) => {
-        set((state) => ({
-            tabs: state.tabs.map((tab) => {
-                if (tab.tabId !== tabId || tab.queue.length === 0) return tab;
-
-                const [current, ...rest] = tab.queue;
-                return {
-                    ...tab,
-                    queue: rest, // Remove from the front; prevCard restores from history
-                    completed: tab.completed + 1,
-                    history: [...tab.history, current],
+                const tabId = `tab-${deck.deckId}-${Date.now()}`;
+                const queue = [...deck.cards];
+                const newTab: ITab = {
+                    tabId,
+                    deck: updatedDeck,
+                    queue,
+                    history: [],
+                    totalCards: queue.length,
+                    completed: 0,
                     flipped: false,
                 };
-            }),
-        }));
-        get().incrementReviewed();
-    },
-    prevCard: (tabId) => {
-        set((state) => ({
-            tabs: state.tabs.map((tab) => {
-                if (tab.tabId !== tabId || tab.history.length === 0) return tab;
 
-                const prev = tab.history[tab.history.length - 1];
-                return {
-                    ...tab,
-                    queue: [prev, ...tab.queue],
-                    history: tab.history.slice(0, -1),
-                    completed: tab.completed - 1,
-                    flipped: false,
-                };
-            }),
-        }));
-    },
+                set((state) => ({
+                    tabs: [...state.tabs, newTab],
+                    activeTabId: tabId,
+                    navView: "decks",
+                    decks: state.decks.map((d) =>
+                        d.deckId === deck.deckId
+                            ? { ...d, lastUtilized: now, uses: d.uses + 1 }
+                            : d,
+                    ),
+                }));
+                window.electronAPI.updateDeck(deck, "uses", deck.uses + 1).catch(console.error);
+                window.electronAPI.updateDeck(deck, "streak", null).catch(console.error);
+            },
+            closeTab: (tabId) => {
+                set((state) => {
+                    const index = state.tabs.findIndex(
+                        (tab) => tab.tabId === tabId,
+                    );
+                    const newTabs = state.tabs.filter(
+                        (tab) => tab.tabId !== tabId,
+                    );
+                    let newActiveId = state.activeTabId;
 
-    answerCard: (tabId, rating) => {
-        set((state) => ({
-            tabs: state.tabs.map((tab) => {
-                if (tab.tabId !== tabId || tab.queue.length === 0) return tab;
-                const [current, ...rest] = tab.queue;
+                    if (state.activeTabId === tabId) {
+                        if (newTabs.length === 0) {
+                            newActiveId = null;
+                        } else if (index === 0) {
+                            newActiveId = newTabs[0].tabId;
+                        } else {
+                            newActiveId = newTabs[index - 1].tabId;
+                        }
+                    }
+
+                    return { tabs: newTabs, activeTabId: newActiveId };
+                });
+            },
+            setActiveTab: (tabId) => set({ activeTabId: tabId }),
+
+            nextCard: (tabId) => {
+                set((state) => ({
+                    tabs: state.tabs.map((tab) => {
+                        if (tab.tabId !== tabId || tab.queue.length === 0)
+                            return tab;
+
+                        const [current, ...rest] = tab.queue;
+                        return {
+                            ...tab,
+                            queue: rest, // Remove from the front; prevCard restores from history
+                            completed: tab.completed + 1,
+                            history: [...tab.history, current],
+                            flipped: false,
+                        };
+                    }),
+                }));
+                get().incrementReviewed();
+            },
+            prevCard: (tabId) => {
+                set((state) => ({
+                    tabs: state.tabs.map((tab) => {
+                        if (tab.tabId !== tabId || tab.history.length === 0)
+                            return tab;
+
+                        const prev = tab.history[tab.history.length - 1];
+                        return {
+                            ...tab,
+                            queue: [prev, ...tab.queue],
+                            history: tab.history.slice(0, -1),
+                            completed: tab.completed - 1,
+                            flipped: false,
+                        };
+                    }),
+                }));
+            },
+
+            answerCard: (tabId, rating) => {
+                // Hoist card + schedule computation so we can fire IPC after set()
+                const currentTab = get().tabs.find((t) => t.tabId === tabId);
+                if (!currentTab || currentTab.queue.length === 0) return;
+                const [currentCard] = currentTab.queue;
                 const { updatedCard } = scheduleCard(
-                    current,
+                    currentCard,
                     rating,
-                    tab.queue,
+                    currentTab.queue,
                 );
-                const updatedDeckCards = tab.deck.cards.map((c) =>
-                    c.cardId === updatedCard.cardId ? updatedCard : c,
-                );
-                // Ratings 3 (next session) and 4 (later) are done for this session —
-                // remove from queue. Ratings 1/2 keep the card in play (recycle to end).
-                // Rating 1 (Again): return to front — same card shown immediately.
-                // Rating 2 (Later This Session): insert at middle — next card shows, this one returns sooner.
-                const isPermanentlyScheduled = rating === 3 || rating === 4;
-                let newQueue: ICard[];
-                if (isPermanentlyScheduled) {
-                    newQueue = rest;
-                } else if (rating === 1) {
-                    newQueue = [updatedCard, ...rest];
-                } else {
-                    // rating === 2: insert at middle
-                    const mid = Math.ceil(rest.length / 2);
-                    newQueue = [...rest.slice(0, mid), updatedCard, ...rest.slice(mid)];
-                }
-                return {
-                    ...tab,
-                    queue: newQueue,
-                    flipped: false,
-                    completed: isPermanentlyScheduled
-                        ? tab.completed + 1
-                        : tab.completed,
-                    // Only add to history when the card leaves the session (3/4),
-                    // not when it's recycled (1/2) — otherwise prevCard creates duplicates
-                    history: isPermanentlyScheduled
-                        ? [...tab.history, current]
-                        : tab.history,
-                    deck: { ...tab.deck, cards: updatedDeckCards },
-                };
-            }),
-        }));
-        get().incrementReviewed();
-    },
 
-    flipCard: (tabId) => {
-        set((state) => ({
-            tabs: state.tabs.map((tab) =>
-                tab.tabId === tabId ? { ...tab, flipped: !tab.flipped } : tab,
-            ),
-        }));
-    },
+                set((state) => ({
+                    tabs: state.tabs.map((tab) => {
+                        if (tab.tabId !== tabId || tab.queue.length === 0)
+                            return tab;
+                        const [, ...rest] = tab.queue;
+                        const updatedDeckCards = tab.deck.cards.map((c) =>
+                            c.cardId === updatedCard.cardId ? updatedCard : c,
+                        );
+                        // Ratings 3 (next session) and 4 (later) are done for this session —
+                        // remove from queue. Ratings 1/2 keep the card in play (recycle to end).
+                        // Rating 1 (Again): return to front — same card shown immediately.
+                        // Rating 2 (Later This Session): insert at middle — next card shows, this one returns sooner.
+                        const isPermanentlyScheduled =
+                            rating === 3 || rating === 4;
+                        let newQueue: ICard[];
+                        if (isPermanentlyScheduled) {
+                            newQueue = rest;
+                        } else if (rating === 1) {
+                            newQueue = [updatedCard, ...rest];
+                        } else {
+                            // rating === 2: insert at middle
+                            const mid = Math.ceil(rest.length / 2);
+                            newQueue = [
+                                ...rest.slice(0, mid),
+                                updatedCard,
+                                ...rest.slice(mid),
+                            ];
+                        }
+                        return {
+                            ...tab,
+                            queue: newQueue,
+                            flipped: false,
+                            completed: isPermanentlyScheduled
+                                ? tab.completed + 1
+                                : tab.completed,
+                            // Only add to history when the card leaves the session (3/4),
+                            // not when it's recycled (1/2) — otherwise prevCard creates duplicates
+                            history: isPermanentlyScheduled
+                                ? [...tab.history, currentCard]
+                                : tab.history,
+                            deck: { ...tab.deck, cards: updatedDeckCards },
+                        };
+                    }),
+                }));
 
-    themePreset: "Default",
-    setThemePreset: (name) =>
-        set((state) => {
-            applyTheme({ themePreset: name, fontSize: state.fontSize, uiFont: state.uiFont, displayFont: state.displayFont });
-            return { themePreset: name };
-        }),
+                // Persist scheduling data to DB
+                window.electronAPI.updateCard(updatedCard, "dueDate", updatedCard.dueDate).catch(console.error);
+                window.electronAPI.updateCard(updatedCard, "laters", updatedCard.laters).catch(console.error);
+                get().incrementReviewed();
+            },
 
-    fontSize: "md",
-    setFontSize: (size) =>
-        set((state) => {
-            applyTheme({ themePreset: state.themePreset, fontSize: size, uiFont: state.uiFont, displayFont: state.displayFont });
-            return { fontSize: size };
-        }),
+            flipCard: (tabId) => {
+                set((state) => ({
+                    tabs: state.tabs.map((tab) =>
+                        tab.tabId === tabId
+                            ? { ...tab, flipped: !tab.flipped }
+                            : tab,
+                    ),
+                }));
+            },
 
-    uiFont: '"Plus Jakarta Sans", sans-serif',
-    setUiFont: (font) =>
-        set((state) => {
-            applyTheme({ themePreset: state.themePreset, fontSize: state.fontSize, uiFont: font, displayFont: state.displayFont });
-            return { uiFont: font };
-        }),
+            themePreset: "Default",
+            setThemePreset: (name) =>
+                set((state) => {
+                    applyTheme({
+                        themePreset: name,
+                        fontSize: state.fontSize,
+                        uiFont: state.uiFont,
+                        displayFont: state.displayFont,
+                    });
+                    return { themePreset: name };
+                }),
 
-    displayFont: '"Lexend", serif',
-    setDisplayFont: (font) =>
-        set((state) => {
-            applyTheme({ themePreset: state.themePreset, fontSize: state.fontSize, uiFont: state.uiFont, displayFont: font });
-            return { displayFont: font };
-        }),
+            fontSize: "md",
+            setFontSize: (size) =>
+                set((state) => {
+                    applyTheme({
+                        themePreset: state.themePreset,
+                        fontSize: size,
+                        uiFont: state.uiFont,
+                        displayFont: state.displayFont,
+                    });
+                    return { fontSize: size };
+                }),
+
+            uiFont: '"Plus Jakarta Sans", sans-serif',
+            setUiFont: (font) =>
+                set((state) => {
+                    applyTheme({
+                        themePreset: state.themePreset,
+                        fontSize: state.fontSize,
+                        uiFont: font,
+                        displayFont: state.displayFont,
+                    });
+                    return { uiFont: font };
+                }),
+
+            displayFont: '"Lexend", serif',
+            setDisplayFont: (font) =>
+                set((state) => {
+                    applyTheme({
+                        themePreset: state.themePreset,
+                        fontSize: state.fontSize,
+                        uiFont: state.uiFont,
+                        displayFont: font,
+                    });
+                    return { displayFont: font };
+                }),
         }),
         {
             name: "devhacks-store",
@@ -334,7 +417,6 @@ export const useAppStore = create<AppState>()(
                 pinnedDeckIds: state.pinnedDeckIds,
                 dailyGoal: state.dailyGoal,
                 reviewHistory: state.reviewHistory,
-                decks: state.decks,
                 tabs: state.tabs,
                 activeTabId: state.activeTabId,
                 themePreset: state.themePreset,
