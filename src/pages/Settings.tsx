@@ -26,7 +26,7 @@ const Settings = () => {
         setDisplayFont,
         dailyGoal,
         setDailyGoal,
-        setNavView
+        setNavView,
         editorPreference,
         setEditorPreference,
     } = useAppStore();

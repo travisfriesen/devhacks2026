@@ -250,7 +250,7 @@ app.whenReady().then(() => {
             if (error === "") {
                 console.log("File opened successfully");
             } else {
-                throw new Error(error);
+                console.error("Error opening file:", error);
             }
         });
     });

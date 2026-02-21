@@ -140,9 +140,10 @@ export const useAppStore = create<AppState>()(
             editingDeckId: null,
             openEditor: (deckId, deckFilepath) => {
                 if (get().editorPreference === "Web Editor") {
-                    //if editor preference is web editor
+                    console.log("open editor for", deckId);
                     set({ navView: "editor", editingDeckId: deckId });
                 } else {
+                    console.log("open editor for", deckFilepath);
                     window.electronAPI.openEditor(deckFilepath);
                 }
             },
