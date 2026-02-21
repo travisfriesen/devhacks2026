@@ -1,0 +1,71 @@
+# cards.retrieveCard: cardId, deckId
+
+SELECT * FROM cards WHERE cardId = :cardId AND deckId = :deckId
+
+# cards.retrieveCards: deckId
+
+SELECT * FROM cards WHERE deckId = :deckId
+
+# cards.retrieveAllCards: 
+
+SELECT * FROM cards
+
+# cards.createCard: card, deckId
+
+INSERT INTO cards (cardId, deckId, question, answer) VALUES (:cardId, :deckId, :question, :answer)
+
+# cards.deleteCard: cardId, deckId
+
+DELETE FROM cards WHERE cardId = :cardId AND deckId = :deckId
+
+# cards.updateCardQuestion: card, question
+
+UPDATE cards SET question = :question WHERE cardId = :cardId AND deckId = :deckId 
+
+# cards.updateCardAnswer: card, answer 
+
+UPDATE cards SET answer = :answer WHERE cardId = :cardId AND deckId = :deckId 
+
+# cards.updateCardLaters: card, later 
+
+UPDATE cards SET laters = :later WHERE cardId = :cardId AND deckId = :deckId 
+
+# cards.updateCardDueDate: card, dueDate
+
+UPDATE cards SET dueDate = :dueDate WHERE cardId = :cardId AND deckId = :deckId 
+
+# deck.retrieveDeck: deckId
+
+SELECT * FROM decks WHERE deckId = :deckId
+
+# deck.retrieveDecks: 
+
+SELECT * FROM decks
+
+# deck.createDeck: deckId, deck
+
+INSERT INTO decks (deckId, name, filepath) VALUES (:deckId, :name, :filepath)
+
+# deck.deleteDeck: deckId
+
+DELETE FROM cards WHERE deckId = :deckId;
+DELETE FROM decks WHERE deckId = :deckId 
+
+# deck.updateDeckFilepath: deck, filepath 
+
+UPDATE decks SET filepath = :filepath WHERE deckId = :deckId 
+ 
+# deck.updateDeckName: deck, name 
+
+UPDATE decks SET name = :name WHERE deckId = :deckId 
+
+** NOTE FOR MINH: you may need to merge from travis' search branch before this
+# search.searchDecks: keyword
+
+** NOTE FOR MINH: your code in all of the following should have something like :keyword = '%' + keyword + '%'.
+**                this '%' is a wildcard character that will allow us to do fuzzy searching 
+SELECT * FROM decks WHERE name LIKE :keyword
+
+# search.searchCards: keyword
+
+SELECT * FROM cards WHERE question LIKE :keyword OR answer LIKE :keyword

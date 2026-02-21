@@ -1,4 +1,8 @@
-import { ICard, IDeck } from "@/types/types";
+import { ICard, IDeck } from "../types/types";
+import { getDatabase } from "./database";
+
+// @ts-expect-error aaaaHHHH
+let db: Database | undefined;
 
 /**
  * Searches by keyword and returns all decks that contain the keyword,
@@ -16,7 +20,15 @@ function searchByKeyword(keyword: string): [decks: IDeck[], cards: ICard[]] {
  * @param keyword
  */
 function searchDecks(keyword: string): IDeck[] {
-    return null;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `SELECT * FROM decks WHERE name LIKE '%' + ? '%'`,
+    );
+
+    return statement.all(keyword);
 }
 
 /**
@@ -25,5 +37,13 @@ function searchDecks(keyword: string): IDeck[] {
  * @param keyword
  */
 function searchCards(keyword: string): ICard[] {
-    return null;
+    if (db === undefined) {
+        db = getDatabase();
+    }
+
+    const statement = db.prepare(
+        `SELECT * FROM cards WHERE question LIKE '%' + ?  + '%' OR answer LIKE '%' + ? + '%'`,
+    );
+
+    return statement.all(keyword);
 }
