@@ -1,6 +1,6 @@
 import sqlite3 from "sqlite3";
 import { Database, open } from "sqlite";
-import { card } from "../types/types";
+import { card, deck } from "../types/types";
 
 export class AppDB {
     private static instance: AppDB;
@@ -180,5 +180,96 @@ export class AppDB {
             console.error("Error updating card dueDate:", error);
             return false;
         }
+    }
+
+    public async retrieveDeckByDeckId(deckId: string): Promise<deck> {
+        return await this.db.get("SELECT * FROM decks WHERE deckId = :deckId", {
+            ":deckId": deckId,
+        });
+    }
+
+    public async retrieveAllDecks(): Promise<deck[]> {
+        return await this.db.get("SELECT * FROM decks");
+    }
+
+    public async createDeck(deckId: string, deck: deck): Promise<boolean> {
+        try {
+            await this.db.run(
+                "INSERT INTO decks (deckId, name, filepath) VALUES (:deckId, :name, :filepath)",
+                {
+                    ":deckId": deckId,
+                    ":name": deck.deckName,
+                    ":filepath": deck.filepath,
+                },
+            );
+        } catch (error) {
+            console.error("Error creating deck:", error);
+            return false;
+        }
+    }
+
+    public async deleteDeck(deckId: string): Promise<boolean> {
+        try {
+            await this.db.run("DELETE FROM cards WHERE deckId = :deckId", {
+                ":deckId": deckId,
+            });
+            await this.db.run("DELETE FROM decks WHERE deckId = :deckId", {
+                ":deckId": deckId,
+            });
+        } catch (error) {
+            console.error("Error deleting deck:", error);
+            return false;
+        }
+    }
+
+    public async updateDeckFilepath(
+        deck: deck,
+        filepath: string,
+    ): Promise<boolean> {
+        try {
+            await this.db.run(
+                "UPDATE decks SET filepath = :filepath WHERE deckId = :deckId",
+                {
+                    ":filepath": filepath,
+                    ":deckId": deck.deckId,
+                },
+            );
+        } catch (error) {
+            console.error("Error updating deck filepath:", error);
+            return false;
+        }
+    }
+
+    public async updateDeckName(deck: deck, name: string): Promise<boolean> {
+        try {
+            await this.db.run(
+                "UPDATE decks SET name = :name WHERE deckId = :deckId",
+                {
+                    ":name": name,
+                    ":deckId": deck.deckId,
+                },
+            );
+        } catch (error) {
+            console.error("Error updating deck name:", error);
+            return false;
+        }
+    }
+
+    public async searchDecksByName(name: string): Promise<deck[]> {
+        return await this.db.get(
+            "SELECT * FROM decks WHERE name LIKE :keyword",
+            {
+                ":keyword": `%${name}%`,
+            },
+        );
+    }
+
+    public async searchCardsByKeywords(keywords: string): Promise<card[]> {
+        return await this.db.get(
+            "SELECT * FROM cards WHERE question LIKE :keyword OR answer LIKE :keyword",
+            {
+                ":keyword": `%${keywords}%`,
+            },
+        );
     }
 }
