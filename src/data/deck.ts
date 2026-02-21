@@ -150,24 +150,25 @@ export function updateDeckStreak(deck: IDeck): boolean {
     const today = new Date();
     // stupid yesterday function because Date.getDate(Date() -1) errors sometimes,
     // and doesn't necessarily handle the ends of the months.
+    // TODO: ACCOUNT FOR LEAP YEARS
     const yesterday = (): Date => {
-        let day = new Date().getDay();
-        let month = new Date().getMonth();
+        let day = new Date().getUTCDate();
+        let month = new Date().getUTCMonth();
         let year = new Date().getFullYear();
 
         const day31 = [1, 3, 5, 7, 8, 10, 12];
         const day30 = [4, 6, 9, 11];
 
         if (day == 1) {
-            if (month == 1) {
-                month = 12;
+            if (month == 0) {
+                month = 11;
                 year = year - 1;
             } else {
                 month = month - 1;
             }
-            if (day31.includes(month)) {
+            if (day31.includes(month+1)) {
                 day = 31;
-            } else if (day30.includes(month)) {
+            } else if (day30.includes(month+1)) {
                 day = 30;
             } else {
                 //february's am i right?
