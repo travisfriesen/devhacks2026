@@ -8,7 +8,9 @@ declare global {
             removeAllListeners: (channel: string) => void;
 
             openFile: () => Promise<string | undefined>;
+            importDeck: () => Promise<IDeck | null>;
             saveFile: (filepath: string, content: string) => Promise<void>;
+            saveFileDialog: (defaultName: string) => Promise<string | undefined>;
             onOpenFileDialog: (callback: (filepaths: string[]) => void) => void;
 
             getDecks: () => Promise<IDeck[]>;

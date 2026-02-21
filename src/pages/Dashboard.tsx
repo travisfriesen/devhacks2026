@@ -23,10 +23,14 @@ const Dashboard = () => {
         openEditor,
         reviewHistory,
         createDeck,
+        loadDecksFromDB,
     } = useAppStore();
 
     const handleOpenFile = async () => {
-        await window.electronAPI.openFile();
+        const deck = await window.electronAPI.importDeck();
+        if (deck) {
+            loadDecksFromDB();
+        }
     };
 
     const allCards = decks.flatMap((deck) =>
@@ -41,10 +45,10 @@ const Dashboard = () => {
     const lastDeck =
         decks.length > 0
             ? [...decks].sort(
-                  (a, b) =>
-                      new Date(b.lastUtilized).getTime() -
-                      new Date(a.lastUtilized).getTime(),
-              )[0]
+                (a, b) =>
+                    new Date(b.lastUtilized).getTime() -
+                    new Date(a.lastUtilized).getTime(),
+            )[0]
             : null;
 
     const totalCards = allCards.length;
@@ -77,17 +81,32 @@ const Dashboard = () => {
         totalCards === 0
             ? 0
             : Math.round(
-                  (allCards.filter((c) => new Date(c.dueDate) > todayStart)
-                      .length /
-                      totalCards) *
-                      100,
-              );
+                (allCards.filter((c) => new Date(c.dueDate) > todayStart)
+                    .length /
+                    totalCards) *
+                100,
+            );
 
     return (
         <div className="flex flex-col flex-1 h-full overflow-y-auto p-8 items-center justify-center">
             <div className="max-w-4xl mx-auto space-y-10">
                 <section>
                     <InspirationalQuotes />
+                </section>
+                <section className="flex items-center gap-3">
+                    <button
+                        onClick={createDeck}
+                        className="flex items-center gap-2 font-ui text-sm px-5 py-2.5 rounded-lg text-paper transition-all"
+                        style={{ backgroundColor: "var(--color-secondary)" }}>
+                        <Plus className="w-4 h-4" />
+                        Create a deck
+                    </button>
+                    <button
+                        onClick={handleOpenFile}
+                        className="flex items-center gap-2 font-ui text-sm px-4 py-2.5 rounded-lg border border-primary/15 text-primary/50 hover:text-primary hover:border-primary/30 transition-all">
+                        <FolderOpen className="w-4 h-4" />
+                        Import from file
+                    </button>
                 </section>
                 {decks.length === 0 && (
                     <section>
@@ -101,21 +120,6 @@ const Dashboard = () => {
                                 <p className="font-ui text-sm text-primary/40 max-w-xs">
                                     Create a new deck from scratch, or import an existing one from your file system.
                                 </p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={createDeck}
-                                    className="flex items-center gap-2 font-ui text-sm px-5 py-2.5 rounded-lg text-paper transition-all"
-                                    style={{ backgroundColor: "var(--color-secondary)" }}>
-                                    <Plus className="w-4 h-4" />
-                                    Create a deck
-                                </button>
-                                <button
-                                    onClick={handleOpenFile}
-                                    className="flex items-center gap-2 font-ui text-sm px-4 py-2.5 rounded-lg border border-primary/15 text-primary/50 hover:text-primary hover:border-primary/30 transition-all">
-                                    <FolderOpen className="w-4 h-4" />
-                                    Import from file
-                                </button>
                             </div>
                         </div>
                     </section>
