@@ -52,6 +52,7 @@ async function handleFileOpen() {
 const createWindow = () => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
+        icon: 'icons/icon.png',
         width: 1100,
         height: 750,
         minWidth: 800,
@@ -242,7 +243,7 @@ app.whenReady().then(() => {
                 case "uses":
                     return updateDeckUses(dbPath, deck, value);
                 case "streak":
-                    return updateDeckStreak(dbPath, deck);
+                    return updateDeckStreak(deck);
                 default:
                     throw new Error("Invalid field");
             }
