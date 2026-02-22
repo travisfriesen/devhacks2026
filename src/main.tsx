@@ -242,7 +242,7 @@ app.whenReady().then(() => {
                 case "uses":
                     return updateDeckUses(deck, value);
                 case "streak":
-                    return updateDeckStreak(deck, value);
+                    return updateDeckStreak(deck);
                 default:
                     throw new Error("Invalid field");
             }
