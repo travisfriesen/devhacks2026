@@ -22,7 +22,7 @@ const config: ForgeConfig = {
     rebuildConfig: {},
     makers: [
         new MakerSquirrel({
-            setupIcon: 'icons/icon.ico',
+            setupIcon: 'public/icons/icon.ico',
         }),
         new MakerZIP({}, ["darwin", "linux"]),
         new MakerDMG({
