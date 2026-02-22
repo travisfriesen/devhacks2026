@@ -67,8 +67,5 @@
     "tailwindcss": "^4.2.0",
     "yaml": "^2.8.2",
     "zustand": "^5.0.11"
-  },
-  "overrides": {
-    "cross-zip": "^4.0.1"
   }
 }
