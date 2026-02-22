@@ -81,12 +81,13 @@ jobs:
           ls -la artifacts/macos || true
           ls -la artifacts/windows || true
           ls -la artifacts/linux || true
+
       - name: Create GitHub Release and upload artifacts
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ env.RELEASE_TAG }}
           name: Release ${{ env.RELEASE_TAG }}
-          files: |
+          artifacts: |
             artifacts/macos/**
             artifacts/windows/**
             artifacts/linux/**
