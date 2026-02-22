@@ -7,21 +7,41 @@ import { VitePlugin } from "@electron-forge/plugin-vite";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
 import AutoUnpackNativesPlugin from "@electron-forge/plugin-auto-unpack-natives";
+import MakerDMG from "@electron-forge/maker-dmg";
 
 const config: ForgeConfig = {
     packagerConfig: {
-        name: "devhacks 2026",
-        executableName: "devhacks2026",
+        name: "Git Gud Cards",
+        executableName: "gitgudcards",
+        appCategoryType: 'public.app-category.education',
+        icon: 'public/icons/icon',
         asar: {
             unpack: '**/node_modules/better-sqlite3/**',
         },
     },
     rebuildConfig: {},
     makers: [
-        new MakerSquirrel({}),
+        new MakerSquirrel({
+            setupIcon: 'icons/icon.ico',
+        }),
         new MakerZIP({}, ["darwin", "linux", "win32"]),
-        new MakerRpm({}),
-        new MakerDeb({}),
+        new MakerDMG({
+            format: "ULFO",
+            icon: 'public/icons/icon.icns',
+        }),
+        new MakerRpm({
+            options: {
+                categories: ["Education"],
+                icon: "public/icons/icon.png",
+            }
+        }),
+        new MakerDeb({
+            options: {
+                section: "education",
+                categories: ["Education"],
+                icon: "public/icons/icon.png",
+            }
+        }),
     ],
     plugins: [
         new AutoUnpackNativesPlugin({}),
@@ -32,12 +52,12 @@ const config: ForgeConfig = {
                 {
                     // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
                     entry: "src/main.tsx",
-                    config: "vite.main.config.ts",
+                    config: "vite.main.config.mts",
                     target: "main",
                 },
                 {
                     entry: "src/preload.ts",
-                    config: "vite.preload.config.ts",
+                    config: "vite.preload.config.mts",
                     target: "preload",
                 },
             ],

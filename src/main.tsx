@@ -51,6 +51,7 @@ async function handleFileOpen() {
 const createWindow = () => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
+        icon: 'icons/icon.png',
         width: 1100,
         height: 750,
         minWidth: 800,
