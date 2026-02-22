@@ -23,6 +23,7 @@ const config: ForgeConfig = {
     makers: [
         new MakerSquirrel({
             setupIcon: 'public/icons/icon.ico',
+            authors: 'Git Gud Cards Team',
         }),
         new MakerZIP({}, ["darwin", "linux"]),
         new MakerDMG({
