@@ -6,19 +6,46 @@ import { MakerRpm } from "@electron-forge/maker-rpm";
 import { VitePlugin } from "@electron-forge/plugin-vite";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
+import AutoUnpackNativesPlugin from "@electron-forge/plugin-auto-unpack-natives";
+import MakerDMG from "@electron-forge/maker-dmg";
 
 const config: ForgeConfig = {
     packagerConfig: {
-        asar: true,
+        name: "Git Gud Cards",
+        executableName: "gitgudcards",
+        appCategoryType: 'public.app-category.education',
+        icon: 'public/icons/icon',
+        asar: {
+            unpack: '**/node_modules/better-sqlite3/**',
+        },
     },
     rebuildConfig: {},
     makers: [
-        new MakerSquirrel({}),
-        new MakerZIP({}, ["darwin", "linux", "win32"]),
-        new MakerRpm({}),
-        new MakerDeb({}),
+        new MakerSquirrel({
+            setupIcon: 'public/icons/icon.ico',
+            authors: 'Git Gud Cards Team',
+        }),
+        new MakerZIP({}, ["darwin", "linux"]),
+        new MakerDMG({
+            format: "ULFO",
+            icon: 'public/icons/icon.icns',
+        }),
+        new MakerRpm({
+            options: {
+                categories: ["Education"],
+                icon: "public/icons/icon.png",
+            }
+        }),
+        new MakerDeb({
+            options: {
+                section: "education",
+                categories: ["Education"],
+                icon: "public/icons/icon.png",
+            }
+        }),
     ],
     plugins: [
+        new AutoUnpackNativesPlugin({}),
         new VitePlugin({
             // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
             // If you are familiar with Vite configuration, it will look really familiar.
@@ -26,12 +53,12 @@ const config: ForgeConfig = {
                 {
                     // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
                     entry: "src/main.tsx",
-                    config: "vite.main.config.ts",
+                    config: "vite.main.config.mts",
                     target: "main",
                 },
                 {
                     entry: "src/preload.ts",
-                    config: "vite.preload.config.ts",
+                    config: "vite.preload.config.mts",
                     target: "preload",
                 },
             ],
